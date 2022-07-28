@@ -155,7 +155,7 @@ class QQoutput():
 
         if msg_type == -1000 or msg_type == -1049 or msg_type == -1051:
             try:
-                return msg.decode('utf-8')
+                return escape(msg.decode('utf-8'))
             except:
                 # print(msg)
                 pass
@@ -220,7 +220,7 @@ class QQoutput():
         cursor = self.fill_cursor(cmd)
         allmsg = []
         for row in cursor:
-            msgdata = row[0]
+            msgdata: bytes = row[0]
             if not msgdata:
                 continue
             uin = row[1]
@@ -298,11 +298,14 @@ class QQoutput():
             filebasename = self.getSafePath(self.troopuin_to_troopname[qq])
         file = f"{filebasename}-{qq}.html"
         file = os.path.join(output_path, file)
+        allmsg = self.message(qq, mode)
+        if len(allmsg) == 0:
+            print(f"{qq}_{mode}没有聊天记录，跳过。")
+            return
         f2 = open(file, "w", encoding="utf-8")
         f2.write(
             "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head>"
         )
-        allmsg = self.message(qq, mode)
         f2.write("<div style='white-space: pre-line'>")
         if mode == 1:
             table = self.uin_to_username
@@ -326,7 +329,7 @@ class QQoutput():
                 f2.write("</b></font>-----<font color=\"green\">")
                 f2.write(ts)
                 f2.write("</font></br>")
-            f2.write(self.add_emoji(escape(msg)))
+            f2.write(self.add_emoji(msg))
             f2.write("</br></br>")
             f2.write("</p>")
         f2.write("</div>")
@@ -422,14 +425,16 @@ class QQoutput():
                 chatimg_basepath = "chatimg"
             rel_path = os.path.join(chatimg_basepath, filename[-3:], filename)
             if os.path.exists(rel_path):
+                print(rel_path)
                 w = 'auto' if doc.uint32_thumb_width == 0 else str(
                     doc.uint32_thumb_width)
                 h = 'auto' if doc.uint32_thumb_height == 0 else str(
                     doc.uint32_thumb_height)
                 if self.combine_img:
                     rel_path = self.get_base64_from_pic(rel_path)
-                return '<img src="{}" width="{}" height="{}" />'.format(rel_path, w, h)
-        except:
+                return '<img src="{}" width="{}" height="{}" />'.format(os.path.join("chatimg", filename[-3:], filename), w, h)
+                # 最后这里必须用相对路径
+        except Exception as e:
             pass
         return '[图片]'
 
@@ -442,7 +447,7 @@ class QQoutput():
                 if elem.picMsg:
                     message += self.decode_pic(elem.picMsg)
                 else:
-                    message += elem.textMsg.decode('utf-8')
+                    message += escape(elem.textMsg.decode('utf-8'))
             return message
         except:
             pass
@@ -458,20 +463,21 @@ def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
         f = open('log.txt', 'w', encoding="utf-8")
     except:
         class ff:
-            def write():pass
-            def close():pass
-        f=ff()
+            def write(): pass
+            def close(): pass
+        f = ff()
     global print
     print_bak = print
-    def print(*arg,**kwarg):
-        print_bak(*arg,**kwarg)
+
+    def print(*arg, **kwarg):
+        print_bak(*arg, **kwarg)
         f.write("[PRINT]: "+' '.join(arg)+"\n")
     try:
         q = QQoutput(base_path, str(qq_self), emoji, with_img, combine_img)
         if dump_all:
             print("正在批量导出……")
             dest = "output_" + \
-                time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))+"_"
+                time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
             try:
                 os.mkdir(dest)
             except:
@@ -491,7 +497,7 @@ def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
             print("")
             print("="*30)
             print("所有记录导出完成。")
-            print("=*30")
+            print("="*30)
         else:
             q.output(qq, mode)
     except Exception as e:
@@ -534,7 +540,7 @@ def run_directly():
         print("")
         print("="*30)
         print("所有记录导出完成。")
-        print("=*30")
+        print("="*30)
 
     else:
         qq = "修改这里！"
