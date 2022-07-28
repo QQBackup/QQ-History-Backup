@@ -68,3 +68,32 @@ message SafeMoreInfo {
 message Test {
   string str = 16;
 }
+
+message PttRec {
+  string localPath = 1;
+  uint64 size = 2;
+  uint32 type = 3;
+  bool isRead = 4;
+  string uuid = 5;
+  string md5 = 6;
+  string serverStorageSource = 7;
+  int32 version = 8;
+  int32 isReport = 9;
+  int32 pttFlag = 10;
+  uint64 groupFileID = 11;
+  string sttText = 12;
+  int32 longPttVipFlag = 13;
+  bool expandStt = 14;
+  string group_file_key = 15;
+  uint64 msgRecTime = 16;
+  uint64 msgTime = 17;
+  uint32 voiceType = 18;
+  uint32 voiceLength = 19;
+  uint32 voiceChangeFlag = 20;
+  string directUrl = 21;
+  uint32 busiType = 22;
+  string fullLocalPath = 23;
+  uint64 extFlag = 24;
+  uint32 redpack_type = 25;
+  uint32 autototext_voice = 26;
+}

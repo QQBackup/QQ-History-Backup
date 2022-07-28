@@ -37,6 +37,7 @@ data\data\com.tencent.mobileqq
 - `com.tencent.mobileqq`：选择导出的相应文件夹，一般为`apps/com.tencent.mobileqq`
 - 表情版本：默认为新版QQ表情。如果你的聊天记录来自很早以前（比如我），可以切换为旧版的表情
 - 导出所有记录：若此项选择“是”，则`QQ号/群号：`与`私聊/群聊：`选项会被忽略。
+- 导出图片：若此项与前一项均选择“是”，必须把`chatimg`目录复制到生成的`output_xxx`目录下，图片才能正常显示
 - 合并图片：默认为否
   - 不启用合并图片好处在于：1. 使导出的 HTML 文件具有可读性；2. 减小 HTML 文件体积方便打开
   - 启用合并图片好处：拷贝时不需要和 `emoticon` 以及 `chatimg` 文件夹一起拷贝，更加方便
@@ -60,7 +61,7 @@ data\data\com.tencent.mobileqq
 - [x] 支持单一文件导出
 - [ ] 支持 iOS 导出
 - [ ] 支持视频导出
-- [ ] 支持音频导出
+- [x] 支持音频导出
 - [ ] 使用脱敏文件作为 e2e 测试
 - [ ] 添加 Makefile 自动化 build/test
 - [ ] 支持缩略图
@@ -95,9 +96,24 @@ data\data\com.tencent.mobileqq
 - 支持批量导出
 - 修复导出的 HTML 中的字符转义
 
+### v2.4
+
+- 支持读取音频
+
 ## 致谢
 
 1. [roadwide/qqmessageoutput](https://github.com/roadwide/qqmessageoutput)
+
 2. [WincerChan/export.py](https://gist.github.com/WincerChan/362331456a6e0417c5aa1cf3ff7be2b7)
 
 3. [Yiyiyimu/QQ-History-Backup](https://github.com/Yiyiyimu/QQ-History-Backup)
+
+## 适配新类型笔记
+
+1. 去下载[protoc](https://github.com/protocolbuffers/protobuf/releases)
+
+2. 编辑`proto/RichMsg.proto`，增加新类型
+
+3. 切换目录到`proto`中，运行`compile`
+
+4. 编辑`QQ_History.py`中的`decrypt`

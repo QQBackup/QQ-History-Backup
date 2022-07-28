@@ -8,7 +8,13 @@ import base64
 from proto.RichMsg_pb2 import PicRec
 from proto.RichMsg_pb2 import Elem
 from proto.RichMsg_pb2 import Msg
+from proto.RichMsg_pb2 import PttRec
 from html import escape
+from tempfile import NamedTemporaryFile
+import pilk
+import av
+av.logging.set_level(av.logging.ERROR)
+
 
 _crc64_init = False
 _crc64_table = [0] * 256
@@ -32,6 +38,12 @@ def crc64(s):
     return v
 
 
+def tempFilename() -> str:
+    f = NamedTemporaryFile(delete=False)
+    f.close()
+    return f.name
+
+
 def isEmpty(s):
     if s is None:
         return True
@@ -45,6 +57,7 @@ def isEmpty(s):
 class QQoutput():
     def __init__(self, base_path: str, qq_self: str, emoji: int = 1, with_img: bool = True, combine_img: bool = False):
         # 真正用到的文件只有[f"{QQ}.db", f"slowtable_{QQ}.db", "kc"]，这里我直接合并到一个层级下了
+        self.IS_TIM = False  # TIM会缺少一些字段
         self.base_path = base_path
         if type(qq_self) == int:
             qq_self = str(qq_self)
@@ -56,7 +69,11 @@ class QQoutput():
         self.init_paths()
         self.init_key()  # 解密用的密钥
         self.c1 = sqlite3.connect(self.db_main_path).cursor()
-        self.c2 = sqlite3.connect(self.db_slow_path).cursor()
+        try:
+            self.c2 = sqlite3.connect(self.db_slow_path).cursor()
+        except:
+            pass
+        self.detect_TIM()
         self.init_friend_list()
         self.init_troop_list()
 #        self.qq: str = qq # 导出对象的QQ号
@@ -95,6 +112,16 @@ class QQoutput():
             if ans == ans_bak:  # 多次匹配
                 break
         return ans
+
+    def detect_TIM(self):
+        try:
+            self.fill_cursor("select troopRemark from TroopInfoV2")
+        except sqlite3.OperationalError:
+            self.IS_TIM = True
+            print("检测到 TIM，部分功能可能缺失！")
+        else:
+            self.IS_TIM = False
+        return self.IS_TIM
 
     def mydecrypt(self, data):
         # 综合一下
@@ -171,6 +198,8 @@ class QQoutput():
             return self.decode_share_url(msg)
         elif msg_type == -5012 or msg_type == -5018:
             return '[戳一戳]'
+        elif msg_type == -2002:  # 语音消息
+            return self.decode_silk(msg)
         # for debug
         # return '[unknown msg_type {}]'.format(msg_type)
         return None
@@ -282,11 +311,14 @@ class QQoutput():
 
     def fill_cursor(self, cmd):
         cursors = self._fill_cursors(cmd)
+        ans = []
         for cs in cursors:
             for row in cs:
-                yield row
+                ans.append(row)
+        return ans
 
     def output(self, qq: str, mode: int, output_path: str = "."):
+        self.outut_path = output_path
         if type(qq) == int:
             qq = str(qq)
         assert(type(qq) == str)
@@ -361,7 +393,7 @@ class QQoutput():
             current_file = join(self.base_path, i)
             if os.path.isfile(current_file):
                 self.kc_path = current_file
-        if self.kc_path is None or self.db_main_path is None or self.db_slow_path is None:
+        if self.kc_path is None or self.db_main_path is None:  # 很少记录的号没有slowtable，故不判断
             raise FileNotFoundError(
                 f"无法找到目标文件！\n路径：{self.base_path}\n当前匹配列表：{[self.kc_path, self.db_main_path, self.db_slow_path]}")
 
@@ -383,6 +415,9 @@ class QQoutput():
         self.TroopsData = []
         # troopuin-群号，troopRemark-群备注，troopname-群名
         execute = "select troopuin,troopRemark,troopname from TroopInfoV2"
+        if self.IS_TIM:
+            execute = execute.replace(
+                "troopRemark", "troopname")  # TIM无法给群聊设备注
         cursor = self.fill_cursor(execute)
         for i in cursor:
             uin, remark, name = i[0], i[1], i[2]
@@ -453,6 +488,63 @@ class QQoutput():
             pass
         return '[混合消息]'
 
+    def decode_silk(self, data):
+        # TODO
+        try:
+            doc = PttRec()
+            doc.ParseFromString(data)
+            print(doc.sttText)
+            voiceLength = doc.voiceLength  # 以秒为单位
+            filename = doc.localPath[doc.localPath.find("/ptt/")+5:]
+            ptt_basepath = os.path.join(self.base_path, "ptt")
+            if not os.path.isdir(ptt_basepath):
+                ptt_basepath = "ptt"
+            rel_path = os.path.join(ptt_basepath, filename)
+            if not os.path.exists(rel_path):
+                p = [".amr", ".slk"]
+                if rel_path.endswith(p[0]) and os.path.exists(rel_path[:-4]+p[1]):
+                    filename = filename[:-4]+p[1]
+                    rel_path = rel_path[:-4]+p[1]
+                elif rel_path.endswith(p[1]) and os.path.exists(rel_path[:-4]+p[0]):
+                    filename = filename[:-4]+p[0]
+                    rel_path = rel_path[:-4]+p[0]
+                else:
+                    # 摆了！
+                    raise FileNotFoundError
+            voice_path = os.path.join(self.outut_path, "voice")
+            if not os.path.exists(voice_path):
+                os.makedirs(voice_path)
+            pcm = tempFilename()
+            pilk.decode(rel_path, pcm)
+            print(pcm)
+            absolute_output = os.path.join(voice_path, filename[:-4]+".mp3")
+            relative_output = os.path.join("voice", filename[:-4]+".mp3")
+            rate=24000# pilk源码写的，不管了
+            with av.open(pcm,format='s16le',options={'ar':str(rate),'ac':'1'}) as in_container:
+                in_stream = in_container.streams.audio[0]
+                with av.open(absolute_output, 'w') as out_container:
+                    out_stream = out_container.add_stream(
+                        'mp3',
+                        rate=rate,
+                        layout='mono'
+                    )
+                    try:
+                        for frame in in_container.decode(in_stream):
+                            frame.pts = None
+                            for packet in out_stream.encode(frame):
+                                out_container.mux(packet)
+                    except Exception as ee:
+                        raise ee
+                        pass
+            os.remove(pcm)
+            return '<audio src="{}" controls title="{}"/>'.format(relative_output, f"时长 {voiceLength} 秒的语音消息")
+            # 最后这里必须用相对路径
+        except Exception as e:
+            print(traceback.format_exc())
+            raise e
+            pass
+        return '[语音消息]'
+
     def decode_share_url(self, msg):
         # TODO
         return '[分享卡片]'
@@ -520,7 +612,7 @@ def run_directly():
     if batch:
         print("正在批量导出……")
         dest = "output_" + \
-            time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))+"_"
+            time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
         try:
             os.mkdir(dest)
         except:
