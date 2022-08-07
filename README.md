@@ -112,7 +112,7 @@ data\data\com.tencent.mobileqq
 
 ## 适配新类型笔记
 
-1. 去下载[protoc](https://github.com/protocolbuffers/protobuf/releases)
+1. 下载 [protoc](https://github.com/protocolbuffers/protobuf/releases) 这个可执行文件
 
 2. 编辑`proto/RichMsg.proto`，增加新类型
 
