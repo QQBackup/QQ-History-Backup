@@ -15,7 +15,7 @@
 
 > 注：以下提到的“电脑”泛指一切可以运行此程序的环境，如安卓手机上的 Termux 也属于此列
 
-> 注：以下内容假设您使用的是 QQ 而非 TIM，如果您在使用 TIM，请将`com.tencent.mobileqq`改为`com.tencent.tim`
+> 注：以下内容假设您使用的是 QQ 而非 TIM，如果您在使用 TIM，请将`com.tencent.mobileqq`改为`com.tencent.tim`，将`MobileQQ`改为`Tim`
 
 如果手机已获得 root 权限，聊天记录可在以下路径找到。
 
@@ -33,6 +33,10 @@
 > <https://www.zhihu.com/question/28574047/answer/964813560>
 
 如果同时需要在聊天记录中显示图片，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic/chatimg` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
+
+（QQ）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/<QQ号>/ptt` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
+
+（TIM）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.tim/Tencent/Tim/ptt/<QQ号>` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下，并重命名为`ptt`。
 
 ## GUI使用方法
 
