@@ -15,10 +15,12 @@
 
 > 注：以下提到的“电脑”泛指一切可以运行此程序的环境，如安卓手机上的 Termux 也属于此列
 
+> 注：以下内容假设您使用的是 QQ 而非 TIM，如果您在使用 TIM，请将`com.tencent.mobileqq`改为`com.tencent.tim`
+
 如果手机已获得 root 权限，聊天记录可在以下路径找到。
 
 ```
-data\data\com.tencent.mobileqq
+/data/data/com.tencent.mobileqq/
 ```
 
 我们需要的文件只有`databases/<QQ号>.db`，`databases/slowtable_<QQ号>.db`，`files/kc`，因此您可以将整个文件夹压缩后传输到电脑上，亦或将这三个文件单独放在同一个目录中传输。本程序会自动识别这两种不同的目录结构。
@@ -30,14 +32,14 @@ data\data\com.tencent.mobileqq
 > 怎样导出手机中的QQ聊天记录？ - 益新软件的回答 - 知乎
 > <https://www.zhihu.com/question/28574047/answer/964813560>
 
-如果同时需要在聊天记录中显示图片，拷贝手机中 `Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic/chatimg` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
+如果同时需要在聊天记录中显示图片，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic/chatimg` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
 
 ## GUI使用方法
 
 ![GUI_image](./img/GUI.png)
 
-- `com.tencent.mobileqq`：选择导出的相应文件夹，一般为`apps/com.tencent.mobileqq`
-- 表情版本：默认为新版QQ表情。如果你的聊天记录来自很早以前（比如我），可以切换为旧版的表情
+- `com.tencent.mobileqq`：选择导出的相应文件夹，对于备份方式，一般为`apps/com.tencent.mobileqq`
+- 表情版本：默认为新版QQ表情。如果你的聊天记录来自很早以前，可以切换为旧版的表情
 - 导出所有记录：若此项选择“是”，则`QQ号/群号：`与`私聊/群聊：`选项会被忽略。
 - 导出图片：若此项与前一项均选择“是”，必须把`chatimg`目录复制到生成的`output_xxx`目录下，图片才能正常显示
 - 合并图片：默认为否
@@ -61,11 +63,8 @@ data\data\com.tencent.mobileqq
 - [x] 自动合并 db 和 slow-table
 - [x] 支持新 QQ emoji
 - [x] 支持单一文件导出
-- [ ] 支持 iOS 导出
 - [ ] 支持视频导出
 - [x] 支持音频导出
-- [ ] 使用脱敏文件作为 e2e 测试
-- [ ] 添加 Makefile 自动化 build/test
 - [ ] 支持缩略图
 - [ ] 支持卡片分享
 
