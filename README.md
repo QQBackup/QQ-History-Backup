@@ -122,3 +122,5 @@
 3. 切换目录到`proto`中，运行`compile`
 
 4. 编辑`QQ_History.py`中的`decrypt`
+
+5. **记得写文档**
