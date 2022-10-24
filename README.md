@@ -1,7 +1,13 @@
 
 # QQ聊天记录导出
 
-[Github下载链接](https://github.com/Young-Lord/QQ-History-Backup/releases) ，不可直接运行。
+## 运行方式
+
+首先安装依赖：`pip install -r requirements.txt`
+
+若是运行 GUI，就`python GUI.py`
+
+若是直接运行命令行版，就修改好`QQ_History.py`最下面的字段运行：`python QQ_History.py`
 
 ## 简介
 
