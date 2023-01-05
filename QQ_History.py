@@ -499,10 +499,12 @@ class QQoutput():
             ptt_basepath = os.path.join(self.base_path, "ptt")
             if not os.path.isdir(ptt_basepath):
                 ptt_basepath = "ptt"
+            if not os.path.isdir(ptt_basepath):
+                return '[语音消息]（目录不存在）'
             rel_path = os.path.join(ptt_basepath, filename)
             if not os.path.exists(rel_path):
                 p = [".amr", ".slk"]
-                if rel_path.endswith(p[0]) and os.path.exists(rel_path[:-4]+p[1]):
+                if rel_path.endswith(p[0]) and os.path.exists(rel_path[:-4]+p[1]): # 试着更改后缀匹配
                     filename = filename[:-4]+p[1]
                     rel_path = rel_path[:-4]+p[1]
                 elif rel_path.endswith(p[1]) and os.path.exists(rel_path[:-4]+p[0]):
@@ -510,13 +512,12 @@ class QQoutput():
                     rel_path = rel_path[:-4]+p[0]
                 else:
                     # 摆了！
-                    raise FileNotFoundError
+                    return f"[语音消息]（文件{rel_path}不存在）"
             voice_path = os.path.join(self.outut_path, "voice")
             if not os.path.exists(voice_path):
                 os.makedirs(voice_path)
             pcm = tempFilename()
             pilk.decode(rel_path, pcm)
-            print(pcm)
             absolute_output = os.path.join(voice_path, filename[:-4]+".mp3")
             relative_output = os.path.join("voice", filename[:-4]+".mp3")
             rate=24000# pilk源码写的，不管了
