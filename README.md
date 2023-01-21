@@ -31,12 +31,14 @@
 
 我们需要的文件只有`databases/<QQ号>.db`，`databases/slowtable_<QQ号>.db`，`files/kc`，因此您可以将整个文件夹压缩后传输到电脑上，亦或将这三个文件单独放在同一个目录中传输。本程序会自动识别这两种不同的目录结构。
 
-如果没有 root权限，可以通过手机自带的备份工具备份整个 QQ，拷贝备份文件到电脑，解压找到 `com.tencent.mobileqq`。
+如果没有 root 权限，可以通过手机自带的备份工具备份整个 QQ，拷贝备份文件到电脑，解压找到 `com.tencent.mobileqq`。
 
 具体方法可以参见
 
 > 怎样导出手机中的QQ聊天记录？ - 益新软件的回答 - 知乎
 > <https://www.zhihu.com/question/28574047/answer/964813560>
+
+关于苹果设备导出，参见[此讨论](https://github.com/Yiyiyimu/QQ-History-Backup/issues/42)；对于安卓系统导出内容的提取，请自行在互联网查询。
 
 如果同时需要在聊天记录中显示图片，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic/chatimg` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
 
@@ -117,13 +119,15 @@
 
 2. [WincerChan/export.py](https://gist.github.com/WincerChan/362331456a6e0417c5aa1cf3ff7be2b7)
 
-3. [Yiyiyimu/QQ-History-Backup](https://github.com/Yiyiyimu/QQ-History-Backup)
+3. [Yiyiyimu/QQ-History-Backup](https://github.com/Yiyiyimu/QQ-History-Backup) （本仓库的来源，致敬！）
+
+4. [ZhangJun2017/QQChatHistoryExporter](https://github.com/ZhangJun2017/QQChatHistoryExporter) （参考了 Protobuf 相关内容）
 
 ## 适配新类型笔记
 
 1. 下载 [protoc](https://github.com/protocolbuffers/protobuf/releases) 这个可执行文件
 
-2. 编辑`proto/RichMsg.proto`，增加新类型
+2. 编辑`proto/RichMsg.proto`，增加新类型（）
 
 3. 切换目录到`proto`中，运行`compile`
 
