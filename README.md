@@ -1,13 +1,13 @@
-
 # QQ聊天记录导出
 
 ## 运行方式
 
-首先安装依赖：`pip install -r requirements.txt`
-
-若是运行 GUI，就`python GUI.py`
-
-若是直接运行命令行版，就修改好`QQ_History.py`最下面的字段运行：`python QQ_History.py`
+1. 一切操作之前，你需要先安装 Python 3.x（建议使用可下载的最高版本，已知支持`3.12`），可参考[此文章（Windows）](https://zhuanlan.zhihu.com/p/458428159)。
+2. 然后，在当前目录打开终端，Windows 用户若不懂可以看[这篇博文](https://blog.csdn.net/Lzy410992/article/details/105937780)
+3. 输入以下命令永久加速相关依赖的下载（换源）：`pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
+3. 安装依赖：`pip install -r requirements.txt`
+4. 若是运行 GUI，就`python GUI.py`
+5. 若是直接运行命令行版，就修改好`QQ_History.py`最下面的内容，并运行：`python QQ_History.py`
 
 ## 简介
 
@@ -125,12 +125,12 @@
 
 ## 适配新类型笔记
 
-1. 下载 [protoc](https://github.com/protocolbuffers/protobuf/releases) 这个可执行文件
+1. 下载 [protoc](https://github.com/protocolbuffers/protobuf/releases) 这一可执行文件，设置可执行权限（仅 Linux 类系统）并移动到适当位置（位于 PATH 环境变量中的目录）
 
-2. 编辑`proto/RichMsg.proto`，增加新类型（）
+2. 编辑`proto/RichMsg.proto`，增加新类型（可以参照[此项目](https://github.com/ZhangJun2017/QQChatHistoryExporter/blob/f97eb64581229a30514d55aa0a8423b138b09437/src/RawMessage.java#L41)）
 
-3. 切换目录到`proto`中，运行`compile`
+3. 切换到目录`proto`中，运行`compile`，在 Windows 下需先将其改名为`compile.bat`
 
-4. 编辑`QQ_History.py`中的`decrypt`
+4. 编辑`QQ_History.py`中的`decrypt`，加入`msgtype`对应判断与处理代码
 
 5. **记得写文档**
