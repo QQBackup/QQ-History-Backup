@@ -324,11 +324,14 @@ class QQoutput():
         assert(type(qq) == str)
         assert(mode in (1, 2))
         name1 = "我"
+        fileprefix = ""
         if mode == 1:
-            filebasename = self.getSafePath(self.uin_to_username[qq])
+            fileprefix = "私聊"
+            filebasename = self.getSafePath(self.uin_to_username.get(qq, qq))
         else:
-            filebasename = self.getSafePath(self.troopuin_to_troopname[qq])
-        file = f"{filebasename}-{qq}.html"
+            fileprefix = "群聊"
+            filebasename = self.getSafePath(self.troopuin_to_troopname.get(qq, qq))
+        file = f"{fileprefix}-{filebasename}-{qq}.html"
         file = os.path.join(output_path, file)
         allmsg = self.message(qq, mode)
         if len(allmsg) == 0:
@@ -342,7 +345,7 @@ class QQoutput():
         if mode == 1:
             table = self.uin_to_username
         else:
-            table = self.troopuin_to_troopmembers[qq]
+            table = self.troopuin_to_troopmembers.get(qq, {})
         for ts, _, uid, msg in allmsg:
             if not msg:
                 continue
