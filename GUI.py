@@ -11,6 +11,11 @@ from time import sleep
 
 def Enter():
     base_path, qq_self, qq = e1.get(), e2.get(), e3.get()
+    try:
+        for i in (e4, e5, e6, e7, e8):
+            if i.get() not in i['values']:
+                info.set(f"某个输入框的值{i.get()}不在允许的取值{i['values']}内！")
+                return ()
     group = 1 if e4.get() == '私聊' else 2
     emoji = 1 if e5.get() == '新' else 2
     dump_all = True if e8.get() == '是' else False
@@ -24,11 +29,13 @@ def Enter():
     #     info.set("批量导出较慢，请耐心等待……")
     # 只要界面未更新 用户就看不到
     try:
+        config = (base_path, qq_self, qq, group,
+                        emoji, with_img, combine_img, dump_all)
         QQ_History.main(base_path, qq_self, qq, group,
                         emoji, with_img, combine_img, dump_all=dump_all)
         info.set("导出完成。")
     except Exception as e:
-        info.set(repr(e))
+        info.set(str(config)+"\r\n"+str(repr(e)))
     return ()
 
 
