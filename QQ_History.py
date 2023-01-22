@@ -327,10 +327,14 @@ class QQoutput():
         fileprefix = ""
         if mode == 1:
             fileprefix = "私聊"
-            filebasename = self.getSafePath(self.uin_to_username.get(qq, qq))
+            filebasename = self.getSafePath(self.uin_to_username.get(qq, str(qq)))
+            if qq not in self.uin_to_username:
+                print(f"警告：{qq}无法在好友列表内找到，请检查聊天类型是否填写正确")
         else:
             fileprefix = "群聊"
-            filebasename = self.getSafePath(self.troopuin_to_troopname.get(qq, qq))
+            filebasename = self.getSafePath(self.troopuin_to_troopname.get(qq, str(qq)))
+            if qq not in self.troopuin_to_troopname:
+                print(f"警告：{qq}无法在群聊列表内找到，请检查聊天类型是否填写正确")
         file = f"{fileprefix}-{filebasename}-{qq}.html"
         file = os.path.join(output_path, file)
         allmsg = self.message(qq, mode)
