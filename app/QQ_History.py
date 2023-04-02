@@ -5,10 +5,10 @@ import os
 import traceback
 import json
 import base64
-from proto.RichMsg_pb2 import PicRec
-from proto.RichMsg_pb2 import Elem
-from proto.RichMsg_pb2 import Msg
-from proto.RichMsg_pb2 import PttRec
+from .proto.RichMsg_pb2 import PicRec
+from .proto.RichMsg_pb2 import Elem
+from .proto.RichMsg_pb2 import Msg
+from .proto.RichMsg_pb2 import PttRec
 from html import escape
 from tempfile import NamedTemporaryFile
 import pilk
@@ -608,7 +608,7 @@ def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
         if repr(e).split(":")[0] == "OperationalError('no such table":
             raise ValueError("信息填入错误")
         else:
-            raise BaseException("Error! See log.txt")
+            raise Exception("Error! See log.txt")
 
 
 def run_directly():

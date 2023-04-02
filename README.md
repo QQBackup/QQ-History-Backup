@@ -1,14 +1,5 @@
 # QQ聊天记录导出
 
-## 运行方式
-
-1. 一切操作之前，你需要先安装 Python 3.x（建议使用可下载的最高版本，已知支持`3.12`），可参考[此文章（Windows）](https://zhuanlan.zhihu.com/p/458428159)。
-2. 然后，在当前目录打开终端，Windows 用户若不懂可以看[这篇博文](https://blog.csdn.net/Lzy410992/article/details/105937780)
-3. 输入以下命令永久加速相关依赖的下载（换源）：`pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
-3. 安装依赖：`pip install -r requirements.txt`
-4. 若是运行 GUI，就`python GUI.py`
-5. 若是直接运行命令行版，就修改好`QQ_History.py`最下面的内容，并运行：`python QQ_History.py`
-
 ## 声明
 
 本项目仅供学习交流使用，严禁用于任何违反中国大陆法律法规、您所在地区法律法规、[QQ软件许可及服务协议](https://rule.tencent.com/rule/preview/46a15f24-e42c-4cb6-a308-2347139b1201)的行为，本人不承担任何相关行为导致的直接或间接责任。
@@ -23,7 +14,24 @@
 
 目前版本往往需要通过命令行运行，本方法在之前版本的基础上简化了操作，制作了GUI方便使用；并且不再需要提供密钥，自动填入备注/昵称，添加了QQ表情、图片和语音的一并导出。
 
-如果你不使用打包后的版本，请首先运行以下命令以安装依赖：`pip install -r requirements.txt`
+### 打包版本下载
+
+本项目使用 GitHub Actions 构建了 PyInstaller 打包版，适用于 64 位 Windows 系统。你可以在以下两处下载：
+
+- [GitHub Actions 页面](https://github.com/Young-Lord/QQ-History-Backup/actions)：需登录，文件自生成起90天后过期，保证基于最新代码
+
+- [GitHub Releases 页面](https://github.com/Young-Lord/pyinstaller/releases/latest)：不需登录，文件不过期，但不一定基于最新代码
+
+下载完成后，双击运行。
+
+### 直接运行
+
+1. 一切操作之前，你需要先安装 Python 3.x（建议使用可下载的最高版本，已知支持`3.12`），可参考[此文章（Windows）](https://zhuanlan.zhihu.com/p/458428159)。
+2. 然后，在当前目录打开终端，Windows 用户若不懂可以看[这篇博文](https://blog.csdn.net/Lzy410992/article/details/105937780)
+3. 输入以下命令永久加速相关依赖的下载（换源）：`pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
+3. 安装依赖：`pip install -r requirements.txt`
+4. 若是运行 GUI，就`python GUI.py`
+5. 若是直接运行命令行版，就修改好`app/QQ_History.py`最下面的内容，并运行：`python main.py`
 
 ## 获取聊天记录文件夹方法
 
