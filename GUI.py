@@ -1,13 +1,18 @@
 import tkinter as tk
 from tkinter import filedialog
 import tkinter.ttk as ttk
-from icon import ico, github_mark
+from icon import qq_icon_png, github_mark
+# 防止加载不出图标
 import base64
 import QQ_History
 import os
 import webbrowser
 from time import sleep
 
+
+class GUI_CONST:
+    TITLE = "QQ聊天记录导出"
+    URL = "https://github.com/Young-Lord/QQ_History_Backup"
 
 def Enter():
     base_path, qq_self, qq = e1.get(), e2.get(), e3.get()
@@ -49,20 +54,20 @@ def SelectImgPath():
 
 
 def url():
-    webbrowser.open_new("https://github.com/Young-Lord/QQ_History_Backup")
+    webbrowser.open_new(GUI_CONST.URL)
 
 
 root = tk.Tk()
 base_path_get, img_path_get, key_get, info = tk.StringVar(
 ), tk.StringVar(), tk.StringVar(), tk.StringVar()
 
-tmp = open("tmp.ico", "wb+")
-tmp.write(base64.b64decode(ico))
+tmp = open("tmp.png", "wb+")
+tmp.write(base64.b64decode(qq_icon_png))
 tmp.close()
-root.iconbitmap("tmp.ico")
-os.remove("tmp.ico")
+root.call('wm', 'iconphoto', root._w,tk.PhotoImage(file='tmp.png'))
+os.remove("tmp.png")
 
-root.title("QQ聊天记录导出")
+root.title(GUI_CONST.TITLE)
 
 ttk.Label(root, text="*com.tencent.mobileqq：").grid(row=0, column=0, sticky="e")
 e1 = ttk.Entry(root, textvariable=base_path_get)
