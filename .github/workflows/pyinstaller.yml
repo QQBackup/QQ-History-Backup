@@ -1,0 +1,23 @@
+name: Pyinstaller 打包
+
+on:
+  push:
+
+jobs:
+  pyinstaller-build:
+    runs-on: windows-latest
+    steps:
+      - name: Create Executable
+        uses: Young-Lord/pyinstaller@v2
+        with:
+          python_ver: '3.11'
+          python_arch: 'x64'
+          spec: 'GUI.spec'
+          requirements: 'requirements.txt'
+          upload_exe_with_name: 'My executable'
+      
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test
+          path: .
+
