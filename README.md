@@ -105,6 +105,8 @@
 - [ ] 分析并试图优化解密相关函数
 - [ ] 更新预览图
 - [ ] 基于 GitHub Actions 以 PyInstaller 生成在 Windows 下的可执行文件
+- [ ] 导出表情商城内的表情
+- [ ] 支持JSOn格式导出
 
 
 
