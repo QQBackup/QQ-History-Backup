@@ -1,4 +1,4 @@
-name: Pyinstaller 打包
+name: PyInstaller 打包
 
 on:
   push:
