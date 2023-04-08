@@ -11,7 +11,7 @@ jobs:
         uses: Young-Lord/pyinstaller@v2
         with:
           python_ver: '3.11'
-          python_arch: 'x64'
+          python_arch: 'x86'
           spec: 'GUI.spec'
           requirements: 'requirements.txt'
           upload_exe_with_name: 'My executable'
