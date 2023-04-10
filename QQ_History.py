@@ -169,40 +169,43 @@ class QQoutput():
 
     def decrypt(self, data, msg_type=-1000):
         # fix处理**一些东西**会出问题，这个不会
-        msg = b''
-        if type(data) == bytes:
+        try:
             msg = b''
-            for i in range(0, len(data)):
-                msg += bytes([data[i] ^ ord(self.key[i % len(self.key)])])
-        elif type(data) == str:
-            msg = ''
-            for i in range(0, len(data)):
-                msg += chr(ord(data[i]) ^ ord(self.key[i % len(self.key)]))
-            return msg
+            if type(data) == bytes:
+                msg = b''
+                for i in range(0, len(data)):
+                    msg += bytes([data[i] ^ ord(self.key[i % len(self.key)])])
+            elif type(data) == str:
+                msg = ''
+                for i in range(0, len(data)):
+                    msg += chr(ord(data[i]) ^ ord(self.key[i % len(self.key)]))
+                return msg
 
-        if msg_type == -1000 or msg_type == -1049 or msg_type == -1051:
-            try:
-                return escape(msg.decode('utf-8'))
-            except:
-                # print(msg)
-                pass
-                return '[decode error]'
+            if msg_type == -1000 or msg_type == -1049 or msg_type == -1051:
+                try:
+                    return escape(msg.decode('utf-8'))
+                except:
+                    # print(msg)
+                    pass
+                    return '[decode error]'
 
-        if not self.with_img:
-            return None
-        elif msg_type == -2000:
-            return self.decode_pic(msg)
-        elif msg_type == -1035:
-            return self.decode_mix_msg(msg)
-        elif msg_type == -5008:
-            return self.decode_share_url(msg)
-        elif msg_type == -5012 or msg_type == -5018:
-            return '[戳一戳]'
-        elif msg_type == -2002:  # 语音消息
-            return self.decode_silk(msg)
+            if not self.with_img:
+                return None
+            elif msg_type == -2000:
+                return self.decode_pic(msg)
+            elif msg_type == -1035:
+                return self.decode_mix_msg(msg)
+            elif msg_type == -5008:
+                return self.decode_share_url(msg)
+            elif msg_type == -5012 or msg_type == -5018:
+                return '[戳一戳]'
+            elif msg_type == -2002:  # 语音消息
+                return self.decode_silk(msg)
+        except:
+            return f'[解码失败({msg_type})]'
         # for debug
-        # return '[unknown msg_type {}]'.format(msg_type)
-        return None
+        return '[unknown msg_type {}]'.format(msg_type)
+        # return ''
 
     def add_emoji(self, msg):
         pos = msg.find('\x14')
