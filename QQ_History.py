@@ -222,8 +222,10 @@ class QQoutput():
 
                 emoticon_path = os.path.join('emoticon', filename)
                 if self.combine_img:
-                    emoticon_path = self.get_base64_from_pic(emoticon_path)
-
+                    try:
+                        emoticon_path = self.get_base64_from_pic(emoticon_path)
+                    except:
+                        pass
                 msg = msg.replace(
                     msg[pos:pos + 2], '<img src="{}" alt="{}" />'.format(emoticon_path, index))
             else:
