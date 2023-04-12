@@ -216,8 +216,9 @@ class QQoutput():
                     filename = "new/s" + index + ".png"
                 else:
                     filename = "old/" + index + ".gif"
-
                 emoticon_path = os.path.join('emoticon', filename)
+                if not os.path.isfile(emoticon_path):
+                    # TODO
                 if self.combine_img:
                     emoticon_path = self.get_base64_from_pic(emoticon_path)
 

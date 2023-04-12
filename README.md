@@ -18,20 +18,39 @@
 
 本项目使用 GitHub Actions 构建了 PyInstaller 打包版，适用于 64 位 Windows 系统。你可以在以下两处下载：
 
-- [GitHub Actions 页面](https://github.com/Young-Lord/QQ-History-Backup/actions)：需登录，文件自生成起90天后过期，保证基于最新代码
+- [GitHub Actions 页面](https://github.com/Young-Lord/QQ-History-Backup/actions)：需登录，文件自生成起90天后过期，保证基于最新代码，不稳定
 
-- [GitHub Releases 页面](https://github.com/Young-Lord/pyinstaller/releases/latest)：不需登录，文件不过期，但不一定基于最新代码
+- [GitHub Releases 页面](https://github.com/Young-Lord/pyinstaller/releases/latest)：不需登录，文件不过期，但不一定基于最新代码，较稳定
 
 下载完成后，双击运行。
 
 ### 直接运行
 
+#### 基础环境
+
 1. 一切操作之前，你需要先安装 Python 3.x（建议使用可下载的最高版本，已知支持`3.12`），可参考[此文章（Windows）](https://zhuanlan.zhihu.com/p/458428159)。
 2. 然后，在当前目录打开终端，Windows 用户若不懂可以看[这篇博文](https://blog.csdn.net/Lzy410992/article/details/105937780)
-3. 输入以下命令永久加速相关依赖的下载（换源）：`pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
-3. 安装依赖：`pip install -r requirements.txt`
-4. 若是运行 GUI，就`python GUI.py`
-5. 若是直接运行命令行版，就修改好`app/QQ_History.py`最下面的内容，并运行：`python main.py`
+3. 执行以下命令永久加速相关依赖的下载（换源）：`pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple`
+
+#### 安装依赖
+
+首先，在上文打开的命令行中执行：`pip install -r requirements.txt`
+
+##### 语音解码相关依赖
+
+如果你需要解码语音文件，请使用以下任意一种方法。否则，你可以直接跳过此部分。
+
+如果你的系统为 Windows，你可以直接下载[扩展包](https://github.com/ZhangJun2017/QQChatHistoryExporter/releases/download/v1.1/QQChatHistoryExporter_v1.1_extra.zip)并将`silk_v3_decoder.exe`与`ffmpeg.exe`放置在`assets`文件夹内。
+
+否则，你可以执行以下命令：`pip install av pilk`
+
+#### 运行
+
+图形界面：`python GUI.py`
+
+命令行：`python TODO.py`
+
+文件版：编辑好`TODO.py`最下面的内容，并运行：`python TODO.py`
 
 ## 获取聊天记录文件夹方法
 
@@ -105,8 +124,8 @@
 - [ ] 分析并试图优化解密相关函数
 - [ ] 更新预览图
 - [ ] 基于 GitHub Actions 以 PyInstaller 生成在 Windows 下的可执行文件
-- [ ] 导出表情商城内的表情
-- [ ] 支持JSOn格式导出
+- [ ] [导出表情商城内的表情](https://github.com/Yiyiyimu/QQ-History-Backup/issues/46)
+- [ ] 支持JSON格式导出
 
 
 
