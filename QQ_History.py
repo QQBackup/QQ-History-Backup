@@ -11,9 +11,6 @@ from proto.RichMsg_pb2 import Msg
 from proto.RichMsg_pb2 import PttRec
 from html import escape
 from tempfile import NamedTemporaryFile
-import pilk
-import av
-av.logging.set_level(av.logging.ERROR)
 
 
 _crc64_init = False
@@ -503,6 +500,9 @@ class QQoutput():
     def decode_silk(self, data):
         # TODO
         try:
+            import pilk
+            import av
+            av.logging.set_level(av.logging.ERROR)
             doc = PttRec()
             doc.ParseFromString(data)
             print(doc.sttText)
@@ -554,8 +554,6 @@ class QQoutput():
             # 最后这里必须用相对路径
         except Exception as e:
             print(traceback.format_exc())
-            raise e
-            pass
         return '[语音消息]'
 
     def decode_share_url(self, msg):
