@@ -8,6 +8,14 @@
 
 本项目不对生成内容的完整性、准确性作任何担保，因此生成的一切内容**没有法律效力**，您不应当将其用于学习与交流外的任何用途。
 
+本项目不接受一切形式的物质捐赠，请勿以此项目为由向我进行任何捐赠。
+
+### 源代码共享
+
+本文档的[致谢](https://github.com/Young-Lord/QQ-History-Backup/tree/master#致谢)部分列出了使用的非本项目内容及其协议（如果适用），此部分内容遵循原版权方要求共享。
+
+除此以外，本项目源代码及资源除以注释等形式特殊说明外，基于[通用许可协议第二版](https://github.com/Young-Lord/QQ-History-Backup/blob/master/LICENSE)共享。简单来说，本项目不允许任何形式的商用，且衍生公开项目必须同时公开源代码。
+
 ## 简介
 
 作为国内最常用的聊天工具之一，QQ 为了用户留存度，默认聊天记录备份无法脱离 QQ 被独立打开。
@@ -125,8 +133,8 @@
 - [ ] 更新预览图
 - [ ] 基于 GitHub Actions 以 PyInstaller 生成在 Windows 下的可执行文件
 - [ ] [导出表情商城内的表情](https://github.com/Yiyiyimu/QQ-History-Backup/issues/46)
-- [ ] 支持JSON格式导出
-
+- [ ] 支持 JSON 格式导出
+- [ ] 支持 Msg3.0.db 的导出并提供相关教程
 
 
 ## FAQ
@@ -164,13 +172,17 @@
 
 ## 致谢
 
-1. [roadwide/qqmessageoutput](https://github.com/roadwide/qqmessageoutput)
+[roadwide/qqmessageoutput](https://github.com/roadwide/qqmessageoutput)
 
-2. [WincerChan/export.py](https://gist.github.com/WincerChan/362331456a6e0417c5aa1cf3ff7be2b7)
+[WincerChan/export.py](https://gist.github.com/WincerChan/362331456a6e0417c5aa1cf3ff7be2b7)
 
-3. [Yiyiyimu/QQ-History-Backup](https://github.com/Yiyiyimu/QQ-History-Backup) （本仓库的来源，致敬！同时，源代码基于 MIT 协议使用。）
+[Yiyiyimu/QQ-History-Backup](https://github.com/Yiyiyimu/QQ-History-Backup) （本仓库的来源，致敬！同时，源代码基于 MIT 协议使用。）
 
-4. [ZhangJun2017/QQChatHistoryExporter](https://github.com/ZhangJun2017/QQChatHistoryExporter) （参考了 Protobuf 相关内容）
+[ZhangJun2017/QQChatHistoryExporter](https://github.com/ZhangJun2017/QQChatHistoryExporter) （参考了 Protobuf 相关内容）
+
+`assets/img/emotion/`下的一切文件以及`img/`下的一切文件版权归`深圳市腾讯计算机系统有限公司`所有，在遵循相关条款情况下使用。
+
+`assets/img/github_star.png`版权归`GitHub`所有。
 
 ## 适配新类型笔记
 
