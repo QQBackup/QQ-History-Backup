@@ -479,7 +479,7 @@ class QQoutput():
                     doc.uint32_thumb_height)
                 if self.combine_img:
                     rel_path = self.get_base64_from_pic(rel_path)
-                return '<img src="{}" width="{}" height="{}" />'.format(os.path.join("chatimg", filename[-3:], filename), w, h)
+                return '<img src="{}" width="{}" height="{}" />'.format(rel_path, w, h)
                 # 最后这里必须用相对路径
         except Exception as e:
             pass
