@@ -308,7 +308,10 @@ class QQoutput():
             cursors.append(self.c2.execute(cmd))
         except:
             pass
-        cursors.append(self.c1.execute(cmd))
+        try:
+            cursors.append(self.c1.execute(cmd))
+        except sqlite3.OperationalError:
+            pass
         return cursors
 
     def fill_cursor(self, cmd):
@@ -574,7 +577,7 @@ def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
 
     def print(*arg, **kwarg):
         print_bak(*arg, **kwarg)
-        f.write("[PRINT]: "+' '.join(arg)+"\n")
+        f.write("[PRINT]: "+' '.join([str(i) for i in arg])+"\n")
     try:
         q = QQoutput(base_path, str(qq_self), emoji, with_img, combine_img)
         if dump_all:
