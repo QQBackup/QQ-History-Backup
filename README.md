@@ -83,30 +83,30 @@
 
 关于苹果设备导出，参见[此讨论](https://github.com/Yiyiyimu/QQ-History-Backup/issues/42)；对于安卓系统导出内容的提取，请自行在互联网查询。
 
-如果同时需要在聊天记录中显示图片，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic/chatimg` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
+如果同时需要在聊天记录中显示图片，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/chatpic` 前文得到的 `com.tencent.mobileqq` 目录下。
 
-（QQ）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/<QQ号>/ptt` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下。
+（QQ）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.mobileqq/Tencent/MobileQQ/<QQ号>/ptt` 至前文得到的 `com.tencent.mobileqq` 目录下。
 
-（TIM）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.tim/Tencent/Tim/ptt/<QQ号>` 至 `GUI.exe` 同一文件夹中或者拷贝过来的`com.tencent.mobileqq`目录下，并重命名为`ptt`。
+（TIM）如果同时需要在聊天记录中显示语音，拷贝手机中 `/sdcard/Android/data/com.tencent.tim/Tencent/Tim/ptt/<QQ号>` 至前文得到的 `com.tencent.mobileqq` 目录下，并重命名为`ptt`。
 
 ## GUI使用方法
 
-![GUI_image](./img/GUI.png)
+![GUI版本的效果图](./img/GUI.png)
 
 - `com.tencent.mobileqq`：选择导出的相应文件夹，对于备份方式，一般为`apps/com.tencent.mobileqq`
 - 表情版本：默认为新版QQ表情。如果你的聊天记录来自很早以前，可以切换为旧版的表情
 - 导出所有记录：若此项选择“是”，则`QQ号/群号：`与`私聊/群聊：`选项会被忽略。
-- 导出图片：若此项与前一项均选择“是”，必须把`chatimg`目录复制到生成的`output_xxx`目录下，图片才能正常显示
+- 导出图片：若此项与前一项均选择“是”，必须把`chatpic`目录复制到生成的`output_xxx`目录下，图片才能正常显示
 - 合并图片：默认为否
   - 不启用合并图片好处在于：1. 使导出的 HTML 文件具有可读性；2. 减小 HTML 文件体积方便打开
-  - 启用合并图片好处：拷贝时不需要和 `emoticon` 以及 `chatimg` 文件夹一起拷贝，更加方便
+  - 启用合并图片好处：拷贝时不需要和 `emoticon` 以及 `chatpic` 文件夹一起拷贝，更加方便
 
 ## 输出截图
 
-![screenshot](./img/layout.png)
-![screenshot](./img/images.png)
+![生成的文件的表情、排版展示](./img/layout.png)
+![图片导出展示](./img/images.png)
 
-如果没有启用合并图片，拷贝生成的聊天记录时需要一起拷贝 `emoticon` 以及 `chatimg` 文件夹.
+如果没有启用合并图片，拷贝生成的聊天记录时需要一起拷贝 `emoticon` 以及 `chatpic` 文件夹.
 
 有 bug 的话提 issue，记得附上 log.txt 里的内容以及终端的报错内容。
 
@@ -135,6 +135,7 @@
 - [ ] [导出表情商城内的表情](https://github.com/Yiyiyimu/QQ-History-Backup/issues/46)
 - [ ] 支持 JSON 格式导出
 - [ ] 支持 Msg3.0.db 的导出并提供相关教程
+- [ ] 支持 Icalingua++ 聊天记录的导出 及 转换至 Icalingua++ 格式
 
 
 ## FAQ
@@ -180,9 +181,13 @@
 
 [ZhangJun2017/QQChatHistoryExporter](https://github.com/ZhangJun2017/QQChatHistoryExporter) （参考了 Protobuf 相关内容）
 
-`assets/img/emotion/`下的一切文件以及`img/`下的一切文件版权归`深圳市腾讯计算机系统有限公司`所有，在遵循相关条款情况下使用。
+`assets/img/emotion/`下的一切文件以及`img/GUI.png`、`img/images.png`、`img/layout.png`版权归`深圳市腾讯计算机系统有限公司`所有，在遵循相关条款情况下使用。
 
 `assets/img/github_star.png`版权归`GitHub`所有。
+
+`img/onimai_meme.jpg`图源 QQ 群聊 628886308。
+
+本项目部分代码使用了 GitHub Copilot 与 ChatGPT，如果您认为侵犯了您的权益，请联系我。
 
 ## 适配新类型笔记
 
@@ -195,3 +200,5 @@
 4. 编辑`QQ_History.py`中的`decrypt`，加入`msgtype`对应判断与处理代码
 
 5. **记得写文档**
+
+![少年，充Q币吗？](./img/onimai_meme.jpg)
