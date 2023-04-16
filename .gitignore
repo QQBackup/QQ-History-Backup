@@ -1,4 +1,3 @@
-*.txt
 !requirements.txt
 *.db
 *.html
