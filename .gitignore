@@ -10,9 +10,7 @@
 build/
 dist/
 __pycache__/
-qq/
-QQ*/
-com.tencent.mobileqq/
-chatimg/
-output_*
-test_qq_files/
+/QQ*/
+/com.tencent.mobileqq/
+/output_*
+/log.txt

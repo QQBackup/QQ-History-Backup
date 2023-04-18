@@ -1,0 +1,8 @@
+GUI / CLI / Code 三个入口
+设置ConfigManager并初始化
+传到HistoryBackup里
+main方法，实例化对应FileManager与Importer
+Importer调用Decrypter生成Chat, Chat中有Message列表
+Exporter选择类型
+
+logger/i18n辅助
