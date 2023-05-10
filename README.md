@@ -14,7 +14,7 @@
 
 本文档的[致谢](https://github.com/Young-Lord/QQ-History-Backup/tree/master#致谢)部分列出了使用的非本项目内容及其协议（如果适用），此部分内容遵循原版权方要求共享。
 
-除此以外，本项目源代码及资源除以注释等形式特殊说明外，基于[通用许可协议第二版](https://github.com/Young-Lord/QQ-History-Backup/blob/master/LICENSE)共享。简单来说，本项目不允许任何形式的商用，且衍生公开项目必须同时公开源代码。
+除此以外，本项目源代码及资源除以注释等形式特殊说明外，基于[GPL v3](https://github.com/Young-Lord/QQ-History-Backup/blob/master/LICENSE)共享。
 
 ## 简介
 
@@ -52,15 +52,27 @@
 
 否则，你可以执行以下命令：`pip install av pilk`
 
+##### 类型未适配？
+
+欢迎将你的样本文件以[邮箱方式](mailto:ly-niko@qq.com)发给我！
+
+请注意，我不对此过程中的一切损失负责，但我也保证不会将你的数据与第三方共享。如果你不放心传输过程中的数据安全，可以使用`encrypter`中的工具加密。
+
 #### 运行
 
 图形界面：`python GUI.py`
 
-命令行：`python TODO.py`
+命令行：`python cli.py`
 
-文件版：编辑好`TODO.py`最下面的内容，并运行：`python TODO.py`
+命令行终端：`python repl.py`
 
-## 获取聊天记录文件夹方法
+Web 界面：`python webui.py`
+
+文件版：编辑`code.py`最下面的内容，并运行：`python code.py`
+
+文件版（JSON）：编辑`code_by_json_config.json`最下面的内容，并运行：`python code_by_json.py`
+
+## 获取聊天记录文件（安卓）
 
 > 注：以下提到的“电脑”泛指一切可以运行此程序的环境，如安卓手机上的 Termux 也属于此列
 
@@ -136,6 +148,8 @@
 - [ ] 支持 JSON 格式导出
 - [ ] 支持 Msg3.0.db 的导出并提供相关教程
 - [ ] 支持 Icalingua++ 聊天记录的导出 及 转换至 Icalingua++ 格式
+- [ ] 增加提交文件加密工具
+- [ ] 优化文档
 
 
 ## FAQ
