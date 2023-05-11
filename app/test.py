@@ -1,2 +1,2 @@
-from app.AssetsManager import AssetsManager
-print(AssetsManager.get_assets("translations", "zh_CN.json"))
+from app.i18n import i18n
+print(i18n().get_string("gui.no"))

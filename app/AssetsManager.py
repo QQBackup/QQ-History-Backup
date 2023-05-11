@@ -12,7 +12,7 @@ class AssetsManager:
         """
         if self.assets_path is not None:
             return
-        self.assets_path = "assets/"
+        self.assets_path = "assets"
         # TODO
 
     @classmethod

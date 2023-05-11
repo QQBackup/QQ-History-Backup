@@ -50,7 +50,7 @@ class _SingleDatabase:
         tables = self.query("SELECT name FROM sqlite_master WHERE type='table'")
         return [table[0] for table in tables]
 
-class Database:
+class MultiDatabase:
     databases: List[_SingleDatabase] = []
     def __init__(self):
         self.databases = []

@@ -2,6 +2,8 @@
     "#VERSION": "?",
     "#ENCODING": "UTF-8",
     "#AUTHOR": "LY",
+    "config.template": "配置模板",
+    "config.language": "语言",
     "gui.option_format": "{text}{necessary_mark}{colon}",
     "gui.necessary_mark": "*",
     "gui.colon": "：",
