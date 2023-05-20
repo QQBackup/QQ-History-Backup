@@ -10,7 +10,7 @@ class i18n():
         if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
-    languages: list = None
+    languages: list = None # 语言列表，越靠后表示越后覆盖
     translation_table: dict = None
     config: Config = None
 
@@ -20,6 +20,12 @@ class i18n():
         """
         system_locale = getdefaultlocale()[0]
         return system_locale
+    
+    def list_all_languages(self) -> list:
+        """
+        列出所有语言
+        """
+        return self.languages
 
     def __init__(self, config: Config = None):
         self.config = config
@@ -43,19 +49,31 @@ class i18n():
         """
         return self.translation_table[key_].format(**kwarg)
 
-    def load_language(self, lang: str, override: bool = False) -> None:
+    def load_language(self, lang: str, override: bool = True) -> None:
         """
+        
         加载语言，可以丢出 TranslationNotFoundError 表示文件不存在
+        :param lang: 语言代码
+        :param override: 是否覆盖已有的翻译，如果为 False 则会覆盖已有的翻译
         """
         try:
             lang_file = AssetsManager.get_assets("translations", lang + ".json")
         except FileNotFoundError as e:
             raise TranslationNotFoundError(e.filename)
-        self.languages.append(lang)
         with open(lang_file, "r", encoding="utf-8") as f:
             if override:
+                self.translation_table.update(json.load(f))
+                self.languages.append(lang)
+            else:
                 old_table = self.translation_table
                 self.translation_table = json.load(f)
                 self.translation_table.update(old_table)
-            else:
-                self.translation_table.update(json.load(f))
+                self.languages.insert(0, lang)
+    
+    def t(self, key_: str, **kwarg) -> str:
+        """
+        get_string 的简写
+        """
+        return self.get_string(key_, **kwarg)
+
+t = i18n().get_string
