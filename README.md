@@ -56,7 +56,12 @@
 
 欢迎将你的样本文件以[邮箱方式](mailto:ly-niko@qq.com)发给我！
 
-请注意，我不对此过程中的一切损失负责，但我也保证不会将你的数据与第三方共享。如果你不放心传输过程中的数据安全，可以使用`encrypter`中的工具加密。
+请注意，我不对此过程中的一切损失或其后果负责，但我也承诺不会将你的数据与未经您许可的第三方共享。如果你不放心传输过程中的数据安全，可以使用`encrypter`中的工具加密。具体用法：
+
+```shell
+pip install rsa
+python encrypter.py 需要加密的文件
+```
 
 #### 运行
 
@@ -68,19 +73,18 @@
 
 Web 界面：`python webui.py`
 
-文件版：编辑`code.py`最下面的内容，并运行：`python code.py`
+文件版：编辑`code_py.py`最下面的内容，并运行：`python code_py.py`
 
 文件版（JSON）：编辑`code_by_json_config.json`最下面的内容，并运行：`python code_by_json.py`
 
 ## 获取聊天记录文件（安卓）
 
 > 注：以下提到的“电脑”泛指一切可以运行此程序的环境，如安卓手机上的 Termux 也属于此列
-
 > 注：以下内容假设您使用的是 QQ 而非 TIM，如果您在使用 TIM，请将`com.tencent.mobileqq`改为`com.tencent.tim`，将`MobileQQ`改为`Tim`
 
 如果手机已获得 root 权限，聊天记录可在以下路径找到。
 
-```
+```plain
 /data/data/com.tencent.mobileqq/
 ```
 
@@ -148,9 +152,8 @@ Web 界面：`python webui.py`
 - [ ] 支持 JSON 格式导出
 - [ ] 支持 Msg3.0.db 的导出并提供相关教程
 - [ ] 支持 Icalingua++ 聊天记录的导出 及 转换至 Icalingua++ 格式
-- [ ] 增加提交文件加密工具
+- [x] 增加提交文件加密工具
 - [ ] 优化文档
-
 
 ## FAQ
 

@@ -1,23 +1,23 @@
 import sqlite3
 import os
 from typing import List, Tuple, Optional
+from app.Log import Log
+log = Log().logger
 
 class _SingleDatabase:
-    path: str = ""
-    conn: sqlite3.Connection = None
-    cur: sqlite3.Cursor = None
-    def __new__(cls, path: str, allow_non_exist: bool = False, *args, **kwargs):
+    def __new__(cls, path: str, allow_non_exist: bool = False):
         if not os.path.isfile(path):
             if allow_non_exist:
+                log.info("Database file not found, ignored: " + path)
                 return None
-            raise FileNotFoundError("TODO")
+            raise FileNotFoundError("Database file not found: " + path)
         else:
             return super().__new__(cls)
 
-    def __init__(self, path: str):
-        self.path = path
-        self.conn = sqlite3.connect(path)
-        self.cur = self.conn.cur()
+    def __init__(self, path: str, allow_non_exist: bool = False):
+        self.path: str = path
+        self.conn: sqlite3.Connection = sqlite3.connect(path)
+        self.cur: sqlite3.Cursor = self.conn.cursor()
 
     def query(self, *args, **kwargs):
         """执行查询语句，返回所有查询结果"""

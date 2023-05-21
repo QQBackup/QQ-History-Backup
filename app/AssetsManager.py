@@ -1,28 +1,65 @@
-from os.path import join as path_join, isfile as path_isfile
+import os
+from app.Log import Log
+log = Log().logger
+
 class AssetsManager:
     """
     获取assets所在路径
     """
 
-    assets_path: str = None
     @classmethod
-    def init_assets(self):
+    def try_assets_path(cls, *args) -> bool:
+        """
+        尝试获取assets路径
+        """
+        if cls.assets_path is not None:
+            return True
+        if os.path.isdir(os.path.join(*args)):
+            cls.assets_path = os.path.join(*args)
+            log.debug("Assets path: " + cls.assets_path)
+            return True
+        else:
+            return False
+
+    @classmethod
+    def init_assets(cls):
         """
         初始化assets路径
         """
-        if self.assets_path is not None:
+        if cls.assets_path is not None:
             return
-        self.assets_path = "assets"
-        # TODO
+        abspath = os.path.abspath(__file__)
+        possible_paths = [
+            ("assets",),
+            ("..", "assets"),
+            (abspath, "assets"),
+            (abspath, "..", "assets"),
+        ]
+        for i in possible_paths:
+            if cls.try_assets_path(i):
+                return
+        raise FileNotFoundError("Assets not found! Tried " + str(possible_paths))
 
     @classmethod
-    def get_assets(self, *arg) -> str:
+    def get_assets(cls, *arg) -> str:
         """
         获取assets下的文件
         """
-        self.init_assets()
-        file_path = path_join(self.assets_path, *arg)
-        if path_isfile(file_path):
+        cls.init_assets()
+        file_path = os.path.join(cls.assets_path, *arg)
+        if os.path.isfile(file_path):
             return file_path
         else:
             raise FileNotFoundError(file_path)
+
+    @classmethod
+    def list_assets(cls, *arg) -> list[str]:
+        """
+        获取assets下某个目录中的文件列表
+        """
+        cls.init_assets()
+        dir_path = os.path.join(cls.assets_path, *arg)
+        if os.path.isdir(dir_path):
+            return os.listdir(dir_path)
+        else:
+            raise NotADirectoryError(dir_path)

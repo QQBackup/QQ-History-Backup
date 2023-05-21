@@ -19,6 +19,7 @@
     "config.export_voice": "导出语音",
     "config.export_image": "导出图片",
     "config.merge_image": "合并图片",
+    "config.log_level": "日志详细程度",
     "config.yes": "是",
     "config.no": "否",
     "true": "true",
@@ -47,6 +48,5 @@
     "message.type.extra": "（{message_extra}）",
     "message.type.extra.unknown_msgtype": "未知的消息类型：{msgtype}",
     "message.type.extra.file_not_found": "文件不存在：{filename}",
-    "error.database_file_not_found": "数据库文件不存在：{path}",
-    
+    "error.database_file_not_found": "数据库文件不存在：{path}"
 }

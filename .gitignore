@@ -14,3 +14,4 @@ __pycache__/
 /com.tencent.mobileqq/
 /output_*
 /log.txt
+/encrypter/private.pem

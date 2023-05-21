@@ -11,4 +11,5 @@ VERSION = "v" + '.'.join([str(i) for i in _VERSION])
 class TranslationNotFoundError(FileNotFoundError):
     pass
 
-    
+class TranslationError(ValueError):
+    pass
