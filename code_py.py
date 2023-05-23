@@ -1,4 +1,4 @@
-from app.ConfigManager import Config
+from app.Config.ConfigManager import Config
 from app.i18n import i18n
 from app.HistoryBackup import HistoryBackup as HB
 from app.Log import Log

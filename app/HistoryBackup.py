@@ -1,4 +1,4 @@
-from app.ConfigManager import Config
+from app.Config.ConfigManager import Config
 
 
 class HistoryBackup:
