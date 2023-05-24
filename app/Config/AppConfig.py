@@ -1,3 +1,4 @@
+from typing import Type
 from app.Const import ConfigError
 from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
@@ -38,7 +39,7 @@ class QqNumber(SingleConfig):
     用于储存自己的 QQ 号，字符串类型。
     """
 
-    type_: object = str
+    type_: Type = str
     pretty_name = "config.qq_number"
     default_value = UNSET
     necessary_group = CONFIG_NECESSARY_ALWAYS

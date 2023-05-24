@@ -3,15 +3,15 @@ from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Const import ConfigError, OptionConfigError, ListConfigError, OptionConfigKeyError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
 from i18n import t
-from typing import Any
+from typing import Any, Optional, Type
 import json
 
 class SingleConfig:
     pretty_name: str = "config.template"
-    type_: object = object
+    type_: Type = object
     value = UNSET
     default_value = UNSET
-    necessary_group: int | None = CONFIG_NECESSARY_NEVER  # 标记是否为必要配置，如果为 None 则不是必要配置，如果为 -1 则始终是必要配置，否则对于每个不同的 necessary_group，只要有一个被配置即可。在Manager中会自动检查
+    necessary_group: Optional[int] = CONFIG_NECESSARY_NEVER  # 标记是否为必要配置，如果为 None 则不是必要配置，如果为 -1 则始终是必要配置，否则对于每个不同的 necessary_group，只要有一个被配置即可。在Manager中会自动检查
     hidden: bool = False  # 标记是否为隐藏配置，如果为 True 则不会在配置文件中显示；同时，未 register 的始终不显示。
     disabled: bool = False  # 标记是否为禁用配置，如果为 True 则会显示为不可修改
 
@@ -97,14 +97,14 @@ class SingleConfig:
 
 
 class IntConfig(SingleConfig):
-    type_: object = int
+    type_: Type = int
 
     def str_to_value(self, str_input: str) -> int:
         return int(str_input)
 
 
 class OptionConfig(SingleConfig):
-    type_: object = object
+    type_: Type = object
     match_table: dict = {}
     display_table: dict = (
         {}
@@ -124,8 +124,8 @@ class OptionConfig(SingleConfig):
 
 
 class ListConfig(SingleConfig):
-    type_: object = list
-    match_list: list | None = []  # 允许的取值，如果为 None 则不限制
+    type_: Type = list
+    match_list: Optional[list] = []  # 允许的取值，如果为 None 则不限制
     display_table: dict = {}  # 显示时应当以什么名字显示，如 {"ui.test": "test"} 就表示该名字的选项值为 "test" 的值
     translatable: bool = True  # 是否要对 display_table 的 key 在显示时进行翻译
 
@@ -147,7 +147,7 @@ class ListConfig(SingleConfig):
 
 
 class FileConfig(SingleConfig):
-    type_: object = str
+    type_: Type = str
 
     def _verify(self, value: str) -> None:
         if not os.path.isfile(value):
@@ -155,7 +155,7 @@ class FileConfig(SingleConfig):
 
 
 class FolderConfig(SingleConfig):
-    type_: object = str
+    type_: Type = str
 
     def _verify(self, value: str) -> None:
         if not os.path.isdir(value):
@@ -163,7 +163,7 @@ class FolderConfig(SingleConfig):
 
 
 class BoolConfig(SingleConfig):
-    type_: object = bool
+    type_: Type = bool
     match_table: dict = {"true": True, "false": False}
     def str_to_value(self, str_input: str):
         str_input = str_input.lower()

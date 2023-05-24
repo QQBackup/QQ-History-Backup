@@ -28,7 +28,7 @@ class _SingleDatabase:
     ):
         if (not readonly) and (not check_same_thread):
             raise ValueError("readonly must be True when check_same_thread is False")
-        self.lock: Lock | None = None
+        self.lock: Optional[Lock] = None
         if not check_same_thread:
             if sqlite3.threadsafety in (0, 1):
                 self.lock = Lock()
@@ -37,25 +37,42 @@ class _SingleDatabase:
             path, check_same_thread=check_same_thread
         )
         self.cur: sqlite3.Cursor = self.conn.cursor()
+    
+    def execute(self, *args, **kwargs) -> Optional[sqlite3.Cursor]:
+        if self.lock:
+            self.lock.acquire()
+        ret = self.cur.execute(*args, **kwargs)
+        if self.lock:
+            self.lock.release()
+        return ret
 
-    def query(self, *args, **kwargs):
+    def query(self, *args, **kwargs) -> List[Tuple]:
         """执行查询语句，返回所有查询结果"""
         if self.lock:
-            with self.lock:
-                self.cur.execute(*args, **kwargs)
+            self.lock.acquire()
+        ret = self.cur.execute(*args, **kwargs)
         yield from self.cur.fetchall()
+        if self.lock:
+            self.lock.release()
 
-    def query_new_cursor(self, *args, **kwargs):
+    def query_new_cursor(self, *args, **kwargs) -> List[Tuple]:
         """使用单独的 cursor 执行查询语句，返回所有查询结果"""
         if self.lock:
-            cur = self.conn.cursor()
-            cur.execute(*args, **kwargs)
-            yield from cur.fetchall()
-            cur.close()
+            self.lock.acquire()
+        cur = self.conn.cursor()
+        cur.execute(*args, **kwargs)
+        yield from cur.fetchall()
+        cur.close()
+        if self.lock:
+            self.lock.release()
 
-    def commit(self):
+
+    def commit(self) -> None:
         """提交更改"""
         if self.lock:
+            with self.lock:
+                self.conn.commit()
+        else:
             self.conn.commit()
 
     def close(self):

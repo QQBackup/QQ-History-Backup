@@ -1,7 +1,8 @@
 from app.Importer.BaseImporter import BaseImporter
 from typing import List, Type
+from app.Const import Singleton
 
-class ImporterManager:
+class ImporterManager(Singleton):
     all_importer_list: List[Type[BaseImporter]] = []
     
     @classmethod

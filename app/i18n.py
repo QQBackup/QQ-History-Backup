@@ -1,30 +1,26 @@
 from locale import getdefaultlocale
 import json
+from typing import List
 from app.AssetsManager import AssetsManager
 from app.Const import TranslationNotFoundError, TranslationError
 from app.Log import Log
+from app.Const import Singleton
 log = Log().logger
 
 TRANSLATION_PATH = "translations"
-class i18n():
-    # singleton
-    _instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
+class i18n(Singleton):
     languages: list = [] # 语言列表，越靠后表示越后覆盖
     translation_table: dict = {}
     config = None
 
-    def get_current_language(self):
+    def get_current_language(self) -> str:
         """
         根据系统设置获取语言
         """
         system_locale = getdefaultlocale()[0]
         return system_locale
     
-    def list_all_languages(self) -> list:
+    def list_all_languages(self) -> List[str]:
         """
         列出所有语言
         """
@@ -55,7 +51,7 @@ class i18n():
             return ("[Translation key " + key_.__repr__() + " not found.]")
         return self.translation_table[key_].format(**kwarg)
     
-    def get_all_available_languages(self) -> list[str]:
+    def get_all_available_languages(self) -> List[str]:
         """
         获取所有可用的语言
         """

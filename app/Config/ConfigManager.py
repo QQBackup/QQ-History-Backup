@@ -4,7 +4,7 @@ from app.Const import (
     CONFIG_NECESSARY_GROUPS_EXPORT_ALL,
 )
 import os
-from typing import Any
+from typing import Any, List, Type
 from app.Log import Log
 from app.Const import UNSET, NOT_PROVIDED
 from app.Config.ConfigTemplate import SingleConfig
@@ -15,8 +15,8 @@ class Config:
     管理单次运行中的配置
     """
 
-    all_config_list: list[type] = []  # 能被用户设置的配置，在所有实例中共享
-    config_list: list[SingleConfig] = []
+    all_config_list: List[type] = []  # 能被用户设置的配置，在所有实例中共享
+    config_list: List[SingleConfig] = []
 
     def __init__(self):
         self.config_list = [i() for i in self.all_config_list]
@@ -98,7 +98,7 @@ class Config:
         return ret
 
     @classmethod
-    def register(cls, config: type):
+    def register(cls, config: Type[SingleConfig]):
         cls.all_config_list.append(config)
         return config
 

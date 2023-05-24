@@ -1,4 +1,5 @@
 import os
+from typing import List
 from app.Log import Log
 log = Log().logger
 
@@ -22,7 +23,7 @@ class AssetsManager:
             return False
 
     @classmethod
-    def init_assets(cls):
+    def init_assets(cls) -> None:
         """
         初始化assets路径
         """
@@ -53,7 +54,7 @@ class AssetsManager:
             raise FileNotFoundError(file_path)
 
     @classmethod
-    def list_assets(cls, *arg) -> list[str]:
+    def list_assets(cls, *arg) -> List[str]:
         """
         获取assets下某个目录中的文件列表
         """

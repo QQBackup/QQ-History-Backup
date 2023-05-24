@@ -27,6 +27,7 @@
     "config.no": "否",
     "importer.template": "导入类型模板",
     "importer.auto_detect": "自动选择导入类型",
+    "importer.android_qq": "安卓 QQ",
     "gui.option_format": "{text}{necessary_mark}{colon}",
     "gui.necessary_mark": "*",
     "gui.colon": "：",
