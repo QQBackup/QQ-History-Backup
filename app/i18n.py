@@ -50,6 +50,9 @@ class i18n():
         """
         获取格式化后的翻译
         """
+        if key_ not in self.translation_table:
+            log.warning("Translation key " + key_ + " not found.")
+            return ("[Translation key " + key_.__repr__() + " not found.]")
         return self.translation_table[key_].format(**kwarg)
     
     def get_all_available_languages(self) -> list[str]:

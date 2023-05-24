@@ -1,9 +1,11 @@
 from app.Const import ConfigError
 from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
-from app.Config.ConfigTemplate import SingleConfig, ListConfig, FolderConfig, YesNoConfig, OptionConfig
+from app.Config.ConfigTemplate import IntConfig, SingleConfig, ListConfig, FolderConfig, YesNoConfig, OptionConfig
 from app.Config.ConfigManager import Config
 from app.i18n import i18n
+from app.Log import Log
+log = Log().logger
 
 @Config.register
 class LanguageCustom(ListConfig):
@@ -141,4 +143,27 @@ class LogLevel(OptionConfig):
         "CRITICAL": CRITICAL,
     }
     necessary_group = CONFIG_NECESSARY_ALWAYS
+
+@Config.register
+class ThreadCount(IntConfig):
+    pretty_name = "config.thread_count"
+    default_value = 1
+    necessary_group = CONFIG_NECESSARY_ALWAYS
+    def _verify(self, value: int) -> None:
+        if value < 1:
+            raise ConfigError(self, value)
+        if value > 16:
+            log.warning(f"线程数过多：{value}")
+
+@Config.register
+class Importer(OptionConfig):
+    pretty_name = "config.importer"
+    default_value = #TODO
+    necessary_group = CONFIG_NECESSARY_ALWAYS
+@Config.register
+class Exporter(OptionConfig):
+    pretty_name = "config.exporter"
+    default_value = #TODO
+    necessary_group = CONFIG_NECESSARY_ALWAYS
+
 

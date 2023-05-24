@@ -1,9 +1,5 @@
-class MessageHandler:
-    _instance = None
-    def __new__(cls, *args, **kw):  # Singleton
-        if cls._instance is None:
-            cls._instance = object.__new__(cls, *args, **kw)
-        return cls._instance
+from app.Const import Singleton
+class MessageHandler(Singleton):
     typeList: dict = {}
     @classmethod
     def register(cls, type_processor): # 注册 msgtype
