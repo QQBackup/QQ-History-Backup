@@ -1,6 +1,6 @@
 import sqlite3
 import os
-from typing import List, Tuple, Optional
+from typing import Generator, Iterable, List, Tuple, Optional
 from app.Log import Log
 
 log = Log().logger
@@ -46,7 +46,7 @@ class _SingleDatabase:
             self.lock.release()
         return ret
 
-    def query(self, *args, **kwargs) -> List[Tuple]:
+    def query(self, *args, **kwargs) -> Iterable[Tuple]:
         """执行查询语句，返回所有查询结果"""
         if self.lock:
             self.lock.acquire()
@@ -55,7 +55,7 @@ class _SingleDatabase:
         if self.lock:
             self.lock.release()
 
-    def query_new_cursor(self, *args, **kwargs) -> List[Tuple]:
+    def query_new_cursor(self, *args, **kwargs) -> Iterable[Tuple]:
         """使用单独的 cursor 执行查询语句，返回所有查询结果"""
         if self.lock:
             self.lock.acquire()
@@ -103,23 +103,15 @@ class MultiDatabase:
         if db is not None:
             self.databases.append(db)
 
-    def query(self, *args, **kwargs) -> List[Tuple]:
+    def query(self, *args, **kwargs) -> Iterable[Tuple]:
         """在所有数据库连接中执行查询并返回结果"""
-        results = []
         for db in self.databases:
-            res = db.query(*args, **kwargs)
-            if res:
-                results.extend(res)
-        return results
+            yield from db.query(*args, **kwargs)
 
-    def query_new_cursor(self, *args, **kwargs) -> List[Tuple]:
+    def query_new_cursor(self, *args, **kwargs) -> Iterable[Tuple]:
         """使用单独的 cursor 在所有数据库连接中执行查询并返回结果"""
-        results = []
         for db in self.databases:
-            res = db.query_new_cursor(*args, **kwargs)
-            if res:
-                results.extend(res)
-        return results
+            yield from db.query_new_cursor(*args, **kwargs)
 
     def commit(self) -> None:
         """提交更改到所有数据库连接"""

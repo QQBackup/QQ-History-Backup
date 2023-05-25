@@ -1,4 +1,5 @@
 from typing import Type
+import json
 from app.Const import ConfigError
 from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
@@ -12,7 +13,7 @@ log = Log().logger
 @Config.register
 class LanguageCustom(ListConfig):
     pretty_name = "config.language"
-    default_value = []  # 从前往后逐个覆盖,也就是越后面的越可能出现在最终的字符串列表中
+    value = json.dumps([])  # 从前往后逐个覆盖,也就是越后面的越可能出现在最终的字符串列表中
     necessary_group = CONFIG_NECESSARY_ALWAYS
     match_list = i18n().get_all_available_languages()
 
@@ -20,9 +21,9 @@ class LanguageCustom(ListConfig):
 @Config.register
 class LanguageFallback(LanguageCustom):
     pretty_name = "config.language_fallback"
-    default_value = [
+    value = json.dumps([
         "zh_CN",
-    ]
+    ])
     hidden = True
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
@@ -30,7 +31,7 @@ class LanguageFallback(LanguageCustom):
 @Config.register
 class ImportPath(FolderConfig):
     pretty_name = "config.import_path"
-    default_value = UNSET
+    value = ""
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
 
@@ -42,7 +43,7 @@ class QqNumber(SingleConfig):
 
     type_: Type = str
     pretty_name = "config.qq_number"
-    default_value = UNSET
+    value = ""
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
     def _verify(self, value: str) -> None:
@@ -54,7 +55,7 @@ class QqNumber(SingleConfig):
 @Config.register
 class ExportAll(YesNoConfig):
     pretty_name = "config.export_all"
-    default_value = False
+    value = json.dumps(False)
     necessary_group = CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 
     def update_other(self, config: Config):
@@ -62,7 +63,7 @@ class ExportAll(YesNoConfig):
         chatId = config.get_single_config("ChatId")
         if self.get() is True:
             chatType.set("all")
-            chatId.set(chatId.default_value)
+            chatId.set("")
             chatId.disable()
         else:
             chatType.enable()
@@ -73,14 +74,14 @@ class ExportAll(YesNoConfig):
 @Config.register
 class ChatId(QqNumber):
     pretty_name = "config.chat_id"
-    default_value = UNSET
+    value = ""
     necessary_group = CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 
 
 @Config.register
 class ChatType(OptionConfig):
     pretty_name = "config.chat_type"
-    default_value = "friend"
+    value = "friend"
     necessary_group = CONFIG_NECESSARY_ALWAYS
     match_table = {"group": "group", "friend": "friend", "all": "all"}
     display_table = {
@@ -94,7 +95,7 @@ class ChatType(OptionConfig):
 @Config.register
 class EmoticonVersion(OptionConfig):
     pretty_name = "config.emoticon_version"
-    default_value = "new"
+    value = "new"
     necessary_group = CONFIG_NECESSARY_ALWAYS
     match_table = {"old": "old", "new": "new"}
     display_table = {
@@ -107,14 +108,14 @@ class EmoticonVersion(OptionConfig):
 @Config.register
 class ExportVoice(YesNoConfig):
     pretty_name = "config.export_voice"
-    default_value = True
+    value = json.dumps(True)
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
 
 @Config.register
 class ExportImage(YesNoConfig):
     pretty_name = "config.export_image"
-    default_value = True
+    value = json.dumps(True)
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
     def update_other(self, config):
@@ -127,7 +128,7 @@ class ExportImage(YesNoConfig):
 @Config.register
 class MergeImage(YesNoConfig):
     pretty_name = "config.merge_image"
-    default_value = True
+    value = json.dumps(True)
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
 
@@ -137,7 +138,7 @@ from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 @Config.register
 class LogLevel(OptionConfig):
     pretty_name = "config.log_level"
-    default_value = INFO
+    value = "INFO"
     match_table = {
         "DEBUG": DEBUG,
         "INFO": INFO,
@@ -150,7 +151,7 @@ class LogLevel(OptionConfig):
 @Config.register
 class ThreadCount(IntConfig):
     pretty_name = "config.thread_count"
-    default_value = 1
+    value = "1"
     necessary_group = CONFIG_NECESSARY_ALWAYS
     def _verify(self, value: int) -> None:
         if value < 1:
@@ -161,13 +162,21 @@ class ThreadCount(IntConfig):
 @Config.register
 class Importer(OptionConfig):
     pretty_name = "config.importer"
-    default_value = ImporterManager.get("AutoDetectImporter")
+    value = "AutoDetectImporter"
     necessary_group = CONFIG_NECESSARY_ALWAYS
+    match_table = ImporterManager().to_match_table()
+    display_table = ImporterManager().to_display_table()
 
 @Config.register
 class Exporter(OptionConfig):
     pretty_name = "config.exporter"
-    default_value = #TODO
+    value = "#TODO" # TODO
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
-
+'''@Config.register
+class DecryptKeys(ListConfig):
+    hidden = True
+    match_list = None
+    pretty_name = "config.decrypt_key"
+    value = "[]"
+    necessary_group = CONFIG_NECESSARY_NEVER'''

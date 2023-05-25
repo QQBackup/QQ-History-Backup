@@ -2,11 +2,11 @@ from app.Const import (
     CONFIG_NECESSARY_NEVER,
     CONFIG_NECESSARY_ALWAYS,
     CONFIG_NECESSARY_GROUPS_EXPORT_ALL,
+    ConfigError,
 )
 import os
 from typing import Any, Dict, List, Type, Union
 from app.Log import Log
-from app.Const import UNSET, NOT_PROVIDED
 from app.Config.ConfigTemplate import SingleConfig
 
 
@@ -23,20 +23,20 @@ class Config:
 
     def by_dict(self, dict_config: Dict[str, str]) -> 'Config':
         """
-        通过未完成 str 解析的 dict 设置
+        通过 str 类型的 dict 设置
         """
         for i in self.config_list:
             if i.__class__.__name__ in dict_config:
                 i.parse_str(dict_config[i.__class__.__name__])
         return self
 
-    def verify(self) -> bool:
+    def verify(self) -> None:
         """
-        验证配置是否正确
+        验证配置是否正确，抛出异常
         """ # TODO: 重写
         for i in self.config_list:
-            if not i.disabled and not i.verify():
-                return False
+            if not i.disabled:
+                i.verify()
         # check necessary group
         necessary_group = {}
         for i in self.config_list:
@@ -47,12 +47,16 @@ class Config:
             ):
                 if i.necessary_group not in necessary_group:
                     necessary_group[i.necessary_group] = False
-                if i.get() is not None:
-                    necessary_group[i.necessary_group] = True
+                if i.value != "":
+                    try:
+                        i.verify()
+                        necessary_group[i.necessary_group] = True
+                    except ConfigError:
+                        pass
         for i in necessary_group:
             if necessary_group[i] is False:
-                return False
-        return True
+                raise ValueError("Necessary group not provided: " + i)
+        return None
 
     def update(self, config) -> 'Config':
         """

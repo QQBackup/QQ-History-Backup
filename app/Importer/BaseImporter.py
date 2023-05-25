@@ -39,3 +39,6 @@ class BaseImporter:
         return (
             f"<Importer: {self.pretty_name}({self.__class__.__name__}) dbs={self.dbs} >"
         )
+    
+    def init_key(self) -> None:
+        pass

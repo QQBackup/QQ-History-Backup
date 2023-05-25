@@ -11,15 +11,14 @@ TypeValue = Union[str, _UNSET]
 class SingleConfig:
     pretty_name: str = "config.template"
     type_: Type = object
-    value: TypeValue = UNSET # 必须使用字符串输入，使用时再解析
-    default_value: TypeValue = UNSET
+    value: str = "" # 必须使用字符串输入，使用时再解析；同时也是默认值，绝对不能对该对象进行修改
     necessary_group: Optional[int] = CONFIG_NECESSARY_NEVER  # 标记是否为必要配置，如果为 None 则不是必要配置，如果为 -1 则始终是必要配置，否则对于每个不同的 necessary_group，只要有一个被配置即可。在Manager中会自动检查
     hidden: bool = False  # 标记是否为隐藏配置，如果为 True 则不会在配置文件中显示；同时，未 register 的始终不显示。
     disabled: bool = False  # 标记是否为禁用配置，如果为 True 则会显示为不可修改
 
     def parse_str(self, str_input: str, no_check: bool = False) -> 'SingleConfig':
         """
-        处理用户输入的字符串，
+        以用户输入的字符串设置配置
         """
         ret = self.set(str_input, no_check=no_check)
         return ret
@@ -30,7 +29,7 @@ class SingleConfig:
         self.value = value
         return self
     
-    def str_to_value(self, str_input: TypeValue) -> Any:
+    def str_to_value(self, str_input: str) -> Any:
         """
         处理用户输入的字符串，返回相对应的配置值。可以丢出异常。
         :param str_input: 用户输入的字符串
@@ -38,23 +37,23 @@ class SingleConfig:
         return str_input
 
 
-    def verify(self, value=UNSET) -> None:
+    def verify(self, value: Union[str, _UNSET]=UNSET) -> None:
         """
         公开函数，用于对已解析的设定值进行验证。
         若验证失败，会抛出异常。
         """
         if value is UNSET:
-            value = self.get()
-        if value is UNSET:
+            value = self.value
+        if value == "":
             if self.necessary_group == CONFIG_NECESSARY_ALWAYS:
                 raise ConfigNecessaryError(self)
             return  # necessary_group 放到别的地方验证
         # if not type(value) == self.type_:
         #     raise ConfigError(self, value)
-        self._verify(value)
+        self._verify(value) # type: ignore
         return
     
-    def _verify(self, value) -> None:
+    def _verify(self, value: str) -> None:
         """
         内部函数，用于对已解析的设定值进行验证。
         若验证失败，会抛出异常。
@@ -71,10 +70,6 @@ class SingleConfig:
         """
         获取配置的值
         """
-        if self.value is UNSET:
-            if self.default_value is UNSET:
-                return UNSET
-            return self.str_to_value(self.default_value) 
         return self.str_to_value(self.value)
 
     def update_other(self, config) -> 'SingleConfig':
@@ -98,24 +93,24 @@ class SingleConfig:
         return self
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.get_pretty_name()}={self.get().__repr__()}>"
+        return f"<{self.get_pretty_name()}({self.__class__.__name__}) value={self.value}>"
     
-    def dump(self) -> Optional[str]:
+    def dump(self) -> str:
         """
-        用于将当前配置转换为字符串，若未设置，返回 None
+        用于将当前配置转换为字符串，若未设置，返回默认值
         """
-        if self.value is not UNSET:
-            return self.value # type: ignore
-        elif self.default_value is not UNSET:
-            return self.default_value # type: ignore
-        return None
+        return self.value
 
 
 class IntConfig(SingleConfig):
     type_: Type = int
 
     def str_to_value(self, str_input: str) -> int:
-        return int(str_input)
+        try:
+            ret = int(str_input)
+        except ValueError:
+            raise ConfigError(self, str_input)
+        return ret
 
 
 class OptionConfig(SingleConfig):
@@ -132,8 +127,8 @@ class OptionConfig(SingleConfig):
             raise OptionConfigKeyError(self, str_input)
         return self.match_table[str_input]
 
-    def _verify(self, value):
-        if value is not UNSET and value not in self.match_table.values():
+    def _verify(self, value: str) -> None:
+        if value not in self.match_table.values():
             raise OptionConfigError(self, value)
 
 
@@ -152,12 +147,13 @@ class ListConfig(SingleConfig):
             raise ListConfigError(self, value)
         return value
 
-    def _verify(self, value) -> None:
+    def _verify(self, value: str) -> None:
+        parsed_list = self.str_to_value(value)
         if not (
             (self.match_list is None)
-            or (not any([True for i in value if i not in self.match_list]))
+            or (not any([True for i in parsed_list if i not in self.match_list]))
         ):
-            raise ListConfigError(self, value)
+            raise ListConfigError(self, parsed_list)
 
 
 class FileConfig(SingleConfig):
