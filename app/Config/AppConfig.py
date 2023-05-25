@@ -4,6 +4,7 @@ from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Config.ConfigTemplate import IntConfig, SingleConfig, ListConfig, FolderConfig, YesNoConfig, OptionConfig
 from app.Config.ConfigManager import Config
+from app.Importer.ImporterManager import ImporterManager
 from app.i18n import i18n
 from app.Log import Log
 log = Log().logger
@@ -66,6 +67,7 @@ class ExportAll(YesNoConfig):
         else:
             chatType.enable()
             chatId.enable()
+        return self
 
 
 @Config.register
@@ -159,8 +161,9 @@ class ThreadCount(IntConfig):
 @Config.register
 class Importer(OptionConfig):
     pretty_name = "config.importer"
-    default_value = #TODO
+    default_value = ImporterManager.get("AutoDetectImporter")
     necessary_group = CONFIG_NECESSARY_ALWAYS
+
 @Config.register
 class Exporter(OptionConfig):
     pretty_name = "config.exporter"

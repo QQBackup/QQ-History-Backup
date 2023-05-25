@@ -1,33 +1,36 @@
 import os
-from app.Const import UNSET, NOT_PROVIDED
+from app.Const import UNSET, NOT_PROVIDED, _UNSET
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Const import ConfigError, OptionConfigError, ListConfigError, OptionConfigKeyError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
 from i18n import t
-from typing import Any, Optional, Type
+from typing import Any, Dict, Optional, Type, Union
 import json
+
+TypeValue = Union[str, _UNSET]
 
 class SingleConfig:
     pretty_name: str = "config.template"
     type_: Type = object
-    value = UNSET
-    default_value = UNSET
+    value: TypeValue = UNSET # 必须使用字符串输入，使用时再解析
+    default_value: TypeValue = UNSET
     necessary_group: Optional[int] = CONFIG_NECESSARY_NEVER  # 标记是否为必要配置，如果为 None 则不是必要配置，如果为 -1 则始终是必要配置，否则对于每个不同的 necessary_group，只要有一个被配置即可。在Manager中会自动检查
     hidden: bool = False  # 标记是否为隐藏配置，如果为 True 则不会在配置文件中显示；同时，未 register 的始终不显示。
     disabled: bool = False  # 标记是否为禁用配置，如果为 True 则会显示为不可修改
 
-    def parse_str(self, str_input: str, no_check: bool = False):
+    def parse_str(self, str_input: str, no_check: bool = False) -> 'SingleConfig':
         """
         处理用户输入的字符串，
         """
-        return self.set(self.str_to_value(str_input), no_check=no_check)
+        ret = self.set(str_input, no_check=no_check)
+        return ret
 
-    def set(self, value, no_check: bool = False):
+    def set(self, value: str, no_check: bool = False) -> 'SingleConfig':
         if not no_check:
-            self.verify(value)
+            self.verify(self.str_to_value(value))
         self.value = value
         return self
     
-    def str_to_value(self, str_input: str):
+    def str_to_value(self, str_input: TypeValue) -> Any:
         """
         处理用户输入的字符串，返回相对应的配置值。可以丢出异常。
         :param str_input: 用户输入的字符串
@@ -46,8 +49,8 @@ class SingleConfig:
             if self.necessary_group == CONFIG_NECESSARY_ALWAYS:
                 raise ConfigNecessaryError(self)
             return  # necessary_group 放到别的地方验证
-        if not type(value) == self.type_:
-            raise ConfigError(self, value)
+        # if not type(value) == self.type_:
+        #     raise ConfigError(self, value)
         self._verify(value)
         return
     
@@ -69,23 +72,25 @@ class SingleConfig:
         获取配置的值
         """
         if self.value is UNSET:
-            return self.default_value
-        return self.value
+            if self.default_value is UNSET:
+                return UNSET
+            return self.str_to_value(self.default_value) 
+        return self.str_to_value(self.value)
 
-    def update_other(self, config):
+    def update_other(self, config) -> 'SingleConfig':
         """
         用于在配置更新时更新其他配置
         """
-        pass
+        return self
 
-    def disable(self):
+    def disable(self) -> 'SingleConfig':
         """
         禁用配置
         """
         self.disabled = True
         return self
 
-    def enable(self):
+    def enable(self) -> 'SingleConfig':
         """
         启用配置
         """
@@ -94,6 +99,16 @@ class SingleConfig:
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.get_pretty_name()}={self.get().__repr__()}>"
+    
+    def dump(self) -> Optional[str]:
+        """
+        用于将当前配置转换为字符串，若未设置，返回 None
+        """
+        if self.value is not UNSET:
+            return self.value # type: ignore
+        elif self.default_value is not UNSET:
+            return self.default_value # type: ignore
+        return None
 
 
 class IntConfig(SingleConfig):
@@ -105,28 +120,27 @@ class IntConfig(SingleConfig):
 
 class OptionConfig(SingleConfig):
     type_: Type = object
-    match_table: dict = {}
-    display_table: dict = (
+    match_table: Dict[str, Any] = {}
+    display_table: Dict[str, str] = (
         {}
     )  # 显示时应当以什么名字显示，如 {"ui.test": "test"} 就表示该名字的选项值为 match_table 中的 "test" 映射后的值
     translatable: bool = True  # 是否要对 display_table 的 key 在显示时进行翻译
 
 
-    def str_to_value(self, str_input: str):
+    def str_to_value(self, str_input: str) -> Any:
         if str_input not in self.match_table.keys():
             raise OptionConfigKeyError(self, str_input)
         return self.match_table[str_input]
 
     def _verify(self, value):
         if value is not UNSET and value not in self.match_table.values():
-            self.value = value
             raise OptionConfigError(self, value)
 
 
 class ListConfig(SingleConfig):
     type_: Type = list
     match_list: Optional[list] = []  # 允许的取值，如果为 None 则不限制
-    display_table: dict = {}  # 显示时应当以什么名字显示，如 {"ui.test": "test"} 就表示该名字的选项值为 "test" 的值
+    display_table: Dict[str, str] = {}  # 显示时应当以什么名字显示，如 {"ui.test": "test"} 就表示该名字的选项值为 "test" 的值
     translatable: bool = True  # 是否要对 display_table 的 key 在显示时进行翻译
 
     def str_to_value(self, str_input: str) -> list:
@@ -164,7 +178,7 @@ class FolderConfig(SingleConfig):
 
 class BoolConfig(SingleConfig):
     type_: Type = bool
-    match_table: dict = {"true": True, "false": False}
+    match_table: Dict[str, bool] = {"true": True, "false": False}
     def str_to_value(self, str_input: str):
         str_input = str_input.lower()
         if str_input in self.match_table.keys():
@@ -173,6 +187,6 @@ class BoolConfig(SingleConfig):
 
 
 class YesNoConfig(BoolConfig):
-    match_table: dict = {"yes": True, "no": False}
-    display_table: dict = {"config.yes": "yes", "config.no": "no"}
+    match_table: Dict[str, bool] = {"yes": True, "no": False}
+    display_table: Dict[str, str] = {"config.yes": "yes", "config.no": "no"}
     translatable: bool = True

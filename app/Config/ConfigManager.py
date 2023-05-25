@@ -4,7 +4,7 @@ from app.Const import (
     CONFIG_NECESSARY_GROUPS_EXPORT_ALL,
 )
 import os
-from typing import Any, List, Type
+from typing import Any, Dict, List, Type, Union
 from app.Log import Log
 from app.Const import UNSET, NOT_PROVIDED
 from app.Config.ConfigTemplate import SingleConfig
@@ -21,19 +21,19 @@ class Config:
     def __init__(self):
         self.config_list = [i() for i in self.all_config_list]
 
-    def by_dict(self, dict_config: dict):
+    def by_dict(self, dict_config: Dict[str, str]) -> 'Config':
         """
-        通过已经完成 str 解析的 dict 设置
+        通过未完成 str 解析的 dict 设置
         """
         for i in self.config_list:
             if i.__class__.__name__ in dict_config:
-                i.set(dict_config[i.__class__.__name__])
+                i.parse_str(dict_config[i.__class__.__name__])
         return self
 
     def verify(self) -> bool:
         """
         验证配置是否正确
-        """
+        """ # TODO: 重写
         for i in self.config_list:
             if not i.disabled and not i.verify():
                 return False
@@ -54,7 +54,7 @@ class Config:
                 return False
         return True
 
-    def update(self, config):
+    def update(self, config) -> 'Config':
         """
         根据另外一个 Config 实例更新
         """
@@ -63,6 +63,7 @@ class Config:
                 if i.__class__.__name__ == j.__class__.__name__:
                     i.set(j.get())
                     break
+        return self
 
     def get_single_config(self, config_name: str) -> SingleConfig:
         """
@@ -73,13 +74,13 @@ class Config:
                 return i
         raise ValueError("Config not found: " + config_name)
 
-    def get(self, config_name: str):
+    def get(self, config_name: str) -> Any:
         """
         获取配置实例的值
         """
         return self.get_single_config(config_name).get()
 
-    def set(self, config_name: str, value):
+    def set(self, config_name: str, value) -> SingleConfig:
         """
         设置配置实例的值
         """
@@ -88,7 +89,7 @@ class Config:
         config.update_other(self)
         return ret
 
-    def str_set(self, config_name: str, value: str):
+    def str_set(self, config_name: str, value: str) -> SingleConfig:
         """
         使用 str 设置配置实例的值
         """
@@ -98,9 +99,15 @@ class Config:
         return ret
 
     @classmethod
-    def register(cls, config: Type[SingleConfig]):
+    def register(cls, config: Type[SingleConfig]) -> Type[SingleConfig]:
         cls.all_config_list.append(config)
         return config
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Config: " + str(self.config_list) + ">"
+    
+    def to_dict(self) -> Dict[str, Union[str, None]]:
+        """
+        将配置转换为 dict
+        """
+        return {i.__class__.__name__: i.dump() for i in self.config_list}
