@@ -163,30 +163,9 @@ Web 界面：`python webui.py`
 
 ## CHANGELOG
 
-### v2
+### v3
 
-- 直接从 `files/kc` 提取明文的密钥，不用再手动输入或解密
-- 支持群聊记录导出
-- 支持 私聊/群聊 的 备注/昵称 自动填入
-- 支持 slowtable 的直接整合
-- 支持新版 QQ 表情
-
-### v2.2
-
-- 支持导出图片至聊天记录
-- 支持合并图片至单一文件方便传输
-
-### v2.3
-
-- 支持读取不同的目录结构
-- 支持单独导出一个私聊对话或群聊对话
-- 部分修复解密函数存在的 bug
-- 支持批量导出
-- 修复导出的 HTML 中的字符转义
-
-### v2.4
-
-- 支持读取音频
+正在进行。重构。
 
 ## 致谢
 
@@ -198,11 +177,15 @@ Web 界面：`python webui.py`
 
 [ZhangJun2017/QQChatHistoryExporter](https://github.com/ZhangJun2017/QQChatHistoryExporter) （参考了 Protobuf 相关内容）
 
+[tsuzcx/qq_apk](https://github.com/tsuzcx/qq_apk)（提供了 QQ 的 apk 反编译文件便于搜索代码）
+
 `assets/img/emotion/`下的一切文件以及`img/GUI.png`、`img/images.png`、`img/layout.png`版权归`深圳市腾讯计算机系统有限公司`所有，在遵循相关条款情况下使用。
 
 `assets/img/github_star.png`版权归`GitHub`所有。
 
 `img/onimai_meme.jpg`图源 QQ 群聊 628886308。
+
+`assets/bin/silk/`中`.exe`格式可执行文件来自`https://github.com/foyoux/silk-codec/releases/tag/v1.0.0`，遵循`GPL-3.0 License`共享。
 
 本项目部分代码使用了 GitHub Copilot 与 ChatGPT，如果您认为侵犯了您的权益，请联系我。
 

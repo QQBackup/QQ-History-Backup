@@ -1,6 +1,7 @@
 import os
-from typing import List
+from typing import List, Tuple
 from app.Log import Log
+import subprocess
 log = Log().logger
 
 class AssetsManager:
@@ -64,3 +65,17 @@ class AssetsManager:
             return os.listdir(dir_path)
         else:
             raise NotADirectoryError(dir_path)
+    
+    @classmethod
+    def execute_asset(cls, *arg, args:list = [], encoding: str = "utf-8") -> Tuple[int, str, str]:
+        """
+        执行assets下的文件，返回执行结果（退出码、stdout、stderr）
+        """
+        cls.init_assets()
+        file_path = os.path.join(cls.assets_path, *arg)
+        if os.path.isfile(file_path):
+            p = subprocess.Popen([file_path, *args], shell=False,stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ret = p.communicate()
+        else:
+            raise FileNotFoundError(file_path)
+        return (p.returncode, ret[0].decode(encoding), ret[1].decode(encoding))
