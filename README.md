@@ -48,7 +48,7 @@
 
 如果你需要解码语音文件，请使用以下任意一种方法。否则，你可以直接跳过此部分。
 
-如果你的系统为 Windows，你可以直接下载[扩展包](https://github.com/ZhangJun2017/QQChatHistoryExporter/releases/download/v1.1/QQChatHistoryExporter_v1.1_extra.zip)并将`silk_v3_decoder.exe`与`ffmpeg.exe`放置在`assets`文件夹内。
+如果你的系统为 Windows，你可以直接下载[扩展包](https://github.com/ZhangJun2017/QQChatHistoryExporter/releases/download/v1.1/QQChatHistoryExporter_v1.1_extra.zip)并将`ffmpeg.exe`放置在`assets`文件夹内。
 
 否则，你可以执行以下命令：`pip install av pilk`
 

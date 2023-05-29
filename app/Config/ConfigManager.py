@@ -84,16 +84,7 @@ class Config:
         """
         return self.get_single_config(config_name).get()
 
-    def set(self, config_name: str, value) -> SingleConfig:
-        """
-        设置配置实例的值
-        """
-        config = self.get_single_config(config_name)
-        ret = config.set(value)
-        config.update_other(self)
-        return ret
-
-    def str_set(self, config_name: str, value: str) -> SingleConfig:
+    def set(self, config_name: str, value: str) -> SingleConfig:
         """
         使用 str 设置配置实例的值
         """

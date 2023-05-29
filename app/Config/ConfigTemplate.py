@@ -20,10 +20,10 @@ class SingleConfig:
         """
         以用户输入的字符串设置配置
         """
-        ret = self.set(str_input, no_check=no_check)
+        ret = self._set(str_input, no_check=no_check)
         return ret
 
-    def set(self, value: str, no_check: bool = False) -> 'SingleConfig':
+    def _set(self, value: str, no_check: bool = False) -> 'SingleConfig':
         if not no_check:
             self.verify(self.str_to_value(value))
         self.value = value
@@ -175,7 +175,7 @@ class FolderConfig(SingleConfig):
 class BoolConfig(SingleConfig):
     type_: Type = bool
     match_table: Dict[str, bool] = {"true": True, "false": False}
-    def str_to_value(self, str_input: str):
+    def str_to_value(self, str_input: str) -> bool:
         str_input = str_input.lower()
         if str_input in self.match_table.keys():
             return self.match_table[str_input]
