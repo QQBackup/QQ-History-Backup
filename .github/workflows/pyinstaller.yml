@@ -13,7 +13,7 @@ jobs:
           python_ver: '3.11'
           python_arch: 'x64'
           spec: 'GUI.spec'
-          requirements: 'requirements.txt'
+          requirements_py: 'requirements.py'
           upload_exe_with_name: 'GUI'
       
       - name: Update full folder
