@@ -153,10 +153,13 @@ class ThreadCount(IntConfig):
     value = "1"
     necessary_group = CONFIG_NECESSARY_ALWAYS
     def _verify(self, value: str) -> None:
-        value = int(value)
-        if value < 1:
+        try:
+            threads = int(value)
+        except ValueError:
             raise ConfigError(self, value)
-        if value > 16:
+        if threads < 1:
+            raise ConfigError(self, value)
+        if threads > 16:
             log.warning(f"线程数过多：{value}")
 
 @Config.register

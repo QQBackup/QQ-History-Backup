@@ -1,6 +1,6 @@
 import os
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
-from app.Const import ConfigError, OptionConfigError, ListConfigError, OptionConfigKeyError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
+from app.Const import ConfigError, OptionConfigError, ListConfigError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
 from app.i18n import t
 from typing import Any, Dict, Optional, Type, Union
 import json
@@ -15,7 +15,7 @@ class SingleConfig:
 
     def set(self, value: str, no_check: bool = False) -> 'SingleConfig':
         if not no_check:
-            self.verify(value = self.str_to_value(value))
+            self.verify(value = value)
         self.value = value
         return self
     
@@ -113,7 +113,7 @@ class OptionConfig(SingleConfig):
 
     def str_to_value(self, str_input: str) -> Any:
         if str_input not in self.match_table.keys():
-            raise OptionConfigKeyError(self, str_input)
+            raise OptionConfigError(self, str_input)
         return self.match_table[str_input]
 
     def _verify(self, value: str) -> None:
@@ -142,7 +142,7 @@ class ListConfig(SingleConfig):
             (self.match_list is None)
             or (not any([True for i in parsed_list if i not in self.match_list]))
         ):
-            raise ListConfigError(self, parsed_list)
+            raise ListConfigError(self, value)
 
 
 class FileConfig(SingleConfig):
