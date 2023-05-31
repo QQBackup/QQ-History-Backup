@@ -15,7 +15,7 @@ for name, libs in requirements:
     # verify libs chars
     error = False
     for lib in libs:
-        if [c for c in lib if not c.isalnum() and c not in "_-"]:
+        if [c for c in lib if not c.isalnum() and c not in "_-[]"]:
             result.append(f"[!] 安装 {name} ({libs}) 失败，库名不合法")
             error = True
             break
