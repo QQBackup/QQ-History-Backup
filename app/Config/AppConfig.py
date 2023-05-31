@@ -1,14 +1,13 @@
 from typing import Type
 import json
 from app.Const import ConfigError
-from app.Const import UNSET, NOT_PROVIDED
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Config.ConfigTemplate import IntConfig, SingleConfig, ListConfig, FolderConfig, YesNoConfig, OptionConfig
 from app.Config.ConfigManager import Config
+from app.Exporter.ExporterManager import ExporterManager
 from app.Importer.ImporterManager import ImporterManager
 from app.i18n import i18n
-from app.Log import Log
-log = Log().logger
+from app.Log import log
 
 @Config.register
 class LanguageCustom(ListConfig):
@@ -153,7 +152,8 @@ class ThreadCount(IntConfig):
     pretty_name = "config.thread_count"
     value = "1"
     necessary_group = CONFIG_NECESSARY_ALWAYS
-    def _verify(self, value: int) -> None:
+    def _verify(self, value: str) -> None:
+        value = int(value)
         if value < 1:
             raise ConfigError(self, value)
         if value > 16:
@@ -164,14 +164,16 @@ class Importer(OptionConfig):
     pretty_name = "config.importer"
     value = "AutoDetectImporter"
     necessary_group = CONFIG_NECESSARY_ALWAYS
-    match_table = ImporterManager().to_match_table()
-    display_table = ImporterManager().to_display_table()
+    match_table = ImporterManager.to_match_table()
+    display_table = ImporterManager.to_display_table()
 
 @Config.register
 class Exporter(OptionConfig):
     pretty_name = "config.exporter"
-    value = "#TODO" # TODO
+    value = ""
     necessary_group = CONFIG_NECESSARY_ALWAYS
+    match_table = ExporterManager.to_match_table()
+    display_table = ExporterManager.to_display_table()
 
 '''@Config.register
 class DecryptKeys(ListConfig):

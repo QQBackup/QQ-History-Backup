@@ -27,7 +27,7 @@ class Config:
         """
         for i in self.config_list:
             if i.__class__.__name__ in dict_config:
-                i.parse_str(dict_config[i.__class__.__name__])
+                i.set(dict_config[i.__class__.__name__])
         return self
 
     def verify(self) -> None:
@@ -89,7 +89,7 @@ class Config:
         使用 str 设置配置实例的值
         """
         config = self.get_single_config(config_name)
-        ret = config.parse_str(value)
+        ret = config.set(value)
         config.update_other(self)
         return ret
 

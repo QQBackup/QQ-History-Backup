@@ -57,4 +57,5 @@ class Log: # https://zhuanlan.zhihu.com/p/166671955
     def set_default_level(self, level: Union[int, str]) -> None:
         self.logger.setLevel(level)
 
-
+log_instance = Log()
+log = log_instance.logger

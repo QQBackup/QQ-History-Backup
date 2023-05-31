@@ -1,12 +1,9 @@
 import os
-from app.Const import UNSET, NOT_PROVIDED, _UNSET
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Const import ConfigError, OptionConfigError, ListConfigError, OptionConfigKeyError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
-from i18n import t
+from app.i18n import t
 from typing import Any, Dict, Optional, Type, Union
 import json
-
-TypeValue = Union[str, _UNSET]
 
 class SingleConfig:
     pretty_name: str = "config.template"
@@ -16,16 +13,9 @@ class SingleConfig:
     hidden: bool = False  # 标记是否为隐藏配置，如果为 True 则不会在配置文件中显示；同时，未 register 的始终不显示。
     disabled: bool = False  # 标记是否为禁用配置，如果为 True 则会显示为不可修改
 
-    def parse_str(self, str_input: str, no_check: bool = False) -> 'SingleConfig':
-        """
-        以用户输入的字符串设置配置
-        """
-        ret = self._set(str_input, no_check=no_check)
-        return ret
-
-    def _set(self, value: str, no_check: bool = False) -> 'SingleConfig':
+    def set(self, value: str, no_check: bool = False) -> 'SingleConfig':
         if not no_check:
-            self.verify(self.str_to_value(value))
+            self.verify(value = self.str_to_value(value))
         self.value = value
         return self
     
@@ -37,13 +27,12 @@ class SingleConfig:
         return str_input
 
 
-    def verify(self, value: Union[str, _UNSET]=UNSET) -> None:
+    def verify(self, **kwarg) -> None:
         """
         公开函数，用于对已解析的设定值进行验证。
         若验证失败，会抛出异常。
         """
-        if value is UNSET:
-            value = self.value
+        value = kwarg.get("value", self.value)
         if value == "":
             if self.necessary_group == CONFIG_NECESSARY_ALWAYS:
                 raise ConfigNecessaryError(self)
@@ -93,7 +82,7 @@ class SingleConfig:
         return self
 
     def __repr__(self) -> str:
-        return f"<{self.get_pretty_name()}({self.__class__.__name__}) value={self.value}>"
+        return f"<{self.get_pretty_name()}({self.__class__.__name__}) value={self.value.__repr__()}>"
     
     def dump(self) -> str:
         """
@@ -128,7 +117,7 @@ class OptionConfig(SingleConfig):
         return self.match_table[str_input]
 
     def _verify(self, value: str) -> None:
-        if value not in self.match_table.values():
+        if value not in self.match_table.keys():
             raise OptionConfigError(self, value)
 
 

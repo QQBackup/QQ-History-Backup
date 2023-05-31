@@ -1,13 +1,15 @@
 import os
 from typing import List, Tuple
-from app.Log import Log
+from app.Log import log
 import subprocess
-log = Log().logger
+from typing import Union
 
 class AssetsManager:
     """
     获取assets所在路径
     """
+
+    assets_path: str = None # type: ignore
 
     @classmethod
     def try_assets_path(cls, *args) -> bool:
@@ -38,7 +40,7 @@ class AssetsManager:
             (abspath, "..", "assets"),
         ]
         for i in possible_paths:
-            if cls.try_assets_path(i):
+            if cls.try_assets_path(*i):
                 return
         raise FileNotFoundError("Assets not found! Tried " + str(possible_paths))
 

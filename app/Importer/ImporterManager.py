@@ -6,13 +6,13 @@ class ImporterManager(Singleton):
     all_importer_list: List[Type[BaseImporter]] = []
     
     @classmethod
-    def register(cls, importer: Type[BaseImporter]):
+    def register(cls, importer: Type[BaseImporter]) -> Type[BaseImporter]:
         cls.all_importer_list.append(importer)
         return importer
 
     @classmethod
     def __repr__(cls):
-        return "<ImportManager: " + str(cls.all_importer_list) + ">"
+        return "<ImporterManager: " + str(cls.all_importer_list) + ">"
     
     @classmethod
     def to_name_list(cls):

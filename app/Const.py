@@ -76,7 +76,7 @@ class OptionConfigKeyError(ConfigError):
 
 class OptionConfigError(ConfigError):
     def __init__(self, config, value):
-        self.message = f"OptionConfigError: {config.pretty_name} got {value}, but expected one of {config.match_table.values()}."
+        self.message = f"OptionConfigError: {config.pretty_name} got {value}, but expected one of {config.match_table.keys()}."
 
 
 class ListConfigError(ConfigError):

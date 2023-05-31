@@ -1,5 +1,6 @@
 from typing import Optional
 from app.Config.ConfigManager import Config
+from app.Log import log
 
 
 class HistoryBackup:
@@ -20,4 +21,6 @@ class HistoryBackup:
         return self
 
     def run(self):
+        log.info("HistoryBackup: 开始运行")
+        log.info("HistoryBackup: 配置: " + str(self.config))
         pass

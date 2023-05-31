@@ -1,11 +1,10 @@
 from locale import getdefaultlocale
 import json
-from typing import List
+from typing import List, Union
 from app.AssetsManager import AssetsManager
 from app.Const import TranslationNotFoundError, TranslationError
-from app.Log import Log
+from app.Log import log
 from app.Const import Singleton
-log = Log().logger
 
 TRANSLATION_PATH = "translations"
 class i18n(Singleton):
@@ -13,7 +12,7 @@ class i18n(Singleton):
     translation_table: dict = {}
     config = None
 
-    def get_current_language(self) -> str:
+    def get_current_language(self) -> Union[str, None]:
         """
         根据系统设置获取语言
         """
@@ -31,7 +30,10 @@ class i18n(Singleton):
         self.languages = []
         self.translation_table = {}
         system_locale = self.get_current_language()
-        langs1 = (self.config.get("LanguageFallback") if config else []) + [system_locale,] + (self.config.get("LanguageCustom") if config else []) # type: ignore
+        system_locale_list = []
+        if system_locale is not None:
+            system_locale_list = [system_locale, ]
+        langs1 = (self.config.get("LanguageFallback") if config else []) + system_locale_list + (self.config.get("LanguageCustom") if config else []) # type: ignore
         langs = []
         [langs.append(lang) for lang in langs1 if lang is not None and lang not in langs] # 去重
         for lang in langs:

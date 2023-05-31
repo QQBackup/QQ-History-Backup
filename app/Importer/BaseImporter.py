@@ -29,7 +29,7 @@ class BaseImporter:
         raise NotImplementedError
 
     @classmethod
-    def detect_percent_of_import(cls, config) -> int:
+    def detect_possibility_of_import(cls, config) -> int:
         """
         判断给定的目录有多少概率是可以导入的
         """

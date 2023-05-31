@@ -1,9 +1,8 @@
 import sqlite3
 import os
-from typing import Generator, Iterable, List, Tuple, Optional
-from app.Log import Log
+from typing import Iterable, List, Tuple, Optional
+from app.Log import log
 
-log = Log().logger
 from threading import Lock
 
 
