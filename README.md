@@ -8,7 +8,7 @@
 
 本项目不对生成内容的完整性、准确性作任何担保，因此生成的一切内容**没有法律效力**，您不应当将其用于学习与交流外的任何用途。
 
-本项目不接受一切形式的物质捐赠，请勿以此项目为由向我进行任何捐赠。
+本项目不接受一切形式的物质捐赠，请勿以此项目为由向我进行任何捐赠。但是，您可以通过 Star 本仓库、访问[我的博客](https://young-lord.github.io/about)并添加友链、反馈 bug、提交聊天记录样本等方式支持本项目。
 
 ### 源代码共享
 
@@ -76,6 +76,10 @@ Web 界面：`python webui.py`
 文件版：编辑`code_py.py`最下面的内容，并运行：`python code_py.py`
 
 文件版（JSON）：编辑`code_by_json_config.json`最下面的内容，并运行：`python code_by_json.py`
+
+## 获取聊天记录文件（Windows）
+
+关联项目： [Young-Lord/qq-win-db-key](https://github.com/Young-Lord/qq-win-db-key)
 
 ## 获取聊天记录文件（安卓）
 
