@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Create Executable
-        uses: Young-Lord/pyinstaller@v2
+        uses: Young-Lord/pyinstaller@master
         with:
           python_ver: '3.11'
           python_arch: 'x64'
