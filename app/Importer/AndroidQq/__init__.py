@@ -7,10 +7,11 @@ from ..ImporterManager import ImporterManager
 from app.Database import _SingleDatabase
 import os
 from app.Log import log
+from app.Const import IMPORTER_POSSIBLE
 
 
 @ImporterManager.register
-class android_qq(BaseImporter):
+class AndroidQq(BaseImporter):
     pretty_name: str = "importer.android_qq"
     decrypt_key: str = ""
 
@@ -34,11 +35,11 @@ class android_qq(BaseImporter):
     def detect_possibility_of_import(self, config) -> int:
         percent = 0
         if os.path.exists(self.get_db_main()):
-            percent += 33
+            percent += IMPORTER_POSSIBLE.FILE_FOUND
         if os.path.exists(self.get_db_slowtable()):
-            percent += 33
+            percent += IMPORTER_POSSIBLE.FILE_FOUND
         if os.path.exists(self.get_kc()):
-            percent += 33
+            percent += IMPORTER_POSSIBLE.KEY_FOUND
         else:
             # TODO: 从配置中获取密钥
             log.warning("未找到密钥文件，无法解密数据库")
@@ -47,9 +48,9 @@ class android_qq(BaseImporter):
             try:
                 db.execute("select troopRemark from TroopInfoV2")
             except sqlite3.OperationalError:
-                percent -= 5  # TIM
+                percent += IMPORTER_POSSIBLE.DOWNGRADE
         except sqlite3.OperationalError:
-            percent -= 10000  # 都打不开数据库了怎么解析？
+            percent = IMPORTER_POSSIBLE.IMPOSSIBLE
         return percent
 
     def init_key(self) -> None:

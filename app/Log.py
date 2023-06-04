@@ -8,6 +8,8 @@ FILENAME = 'log.txt'
 # 设置日志格式和时间格式
 FMT = '%(asctime)s %(filename)s [line:%(lineno)d] %(levelname)s: %(message)s'
 DATEFMT = '%Y-%m-%d %H:%M:%S'
+FMT_CLI = "%(asctime)s %(levelname)s: %(message)s"
+DATEFMT_CLI = '%M:%S'
 
 class SingleLevelFilter(logging.Filter): # https://stackoverflow.com/a/1383365
     def __init__(self, passlevel: int, reject: bool):
@@ -24,6 +26,7 @@ class Log: # https://zhuanlan.zhihu.com/p/166671955
     def __init__(self):
         self.logger = logging.getLogger()
         self.formatter = logging.Formatter(fmt=FMT, datefmt=DATEFMT)
+        self.formatter_cli = logging.Formatter(fmt=FMT_CLI, datefmt=DATEFMT_CLI)
         self.log_filename = FILENAME
 
         self.logger.addHandler(self.get_file_handler(self.log_filename))
@@ -41,7 +44,7 @@ class Log: # https://zhuanlan.zhihu.com/p/166671955
     # 输出到stdout handler的函数定义
     def get_stdout_handler(self) -> logging.StreamHandler:
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(self.formatter)
+        console_handler.setFormatter(self.formatter_cli)
         f1 = SingleLevelFilter(logging.INFO, False)
         console_handler.addFilter(f1)
         return console_handler
@@ -49,7 +52,7 @@ class Log: # https://zhuanlan.zhihu.com/p/166671955
     # 输出到stderr handler的函数定义
     def get_stderr_handler(self) -> logging.StreamHandler:
         console_handler = logging.StreamHandler(sys.stderr)
-        console_handler.setFormatter(self.formatter)
+        console_handler.setFormatter(self.formatter_cli)
         f1 = SingleLevelFilter(logging.INFO, True)
         console_handler.addFilter(f1)
         return console_handler

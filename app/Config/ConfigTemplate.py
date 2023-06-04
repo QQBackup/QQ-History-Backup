@@ -1,6 +1,7 @@
 import os
 from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
 from app.Const import ConfigError, OptionConfigError, ListConfigError, ConfigNecessaryError, BoolConfigError, FileConfigError, FolderConfigError
+from app.Const import UNSET
 from app.i18n import t
 from typing import Any, Dict, Optional, Type, Union
 import json
@@ -12,11 +13,13 @@ class SingleConfig:
     necessary_group: Optional[int] = CONFIG_NECESSARY_NEVER  # 标记是否为必要配置，如果为 None 则不是必要配置，如果为 -1 则始终是必要配置，否则对于每个不同的 necessary_group，只要有一个被配置即可。在Manager中会自动检查
     hidden: bool = False  # 标记是否为隐藏配置，如果为 True 则不会在配置文件中显示；同时，未 register 的始终不显示。
     disabled: bool = False  # 标记是否为禁用配置，如果为 True 则会显示为不可修改
+    temp_parsed_value = UNSET # 临时存储解析后的值，用于 get
 
     def set(self, value: str, no_check: bool = False) -> 'SingleConfig':
         if not no_check:
             self.verify(value = value)
         self.value = value
+        self.temp_parsed_value = UNSET
         return self
     
     def str_to_value(self, str_input: str) -> Any:
@@ -32,6 +35,8 @@ class SingleConfig:
         公开函数，用于对已解析的设定值进行验证。
         若验证失败，会抛出异常。
         """
+        if self.disabled:
+            return
         value = kwarg.get("value", self.value)
         if value == "":
             if self.necessary_group == CONFIG_NECESSARY_ALWAYS:
@@ -59,6 +64,8 @@ class SingleConfig:
         """
         获取配置的值
         """
+        if self.temp_parsed_value is not UNSET:
+            return self.temp_parsed_value
         return self.str_to_value(self.value)
 
     def update_other(self, config) -> 'SingleConfig':

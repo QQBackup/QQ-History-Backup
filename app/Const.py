@@ -140,3 +140,12 @@ def getSafePath(ans: str) -> str:
         if ans == ans_bak:
             break
     return ans
+
+# Importer constants
+
+class IMPORTER_POSSIBLE:
+    IMPOSSIBLE = -100000
+    FILE_FOUND = 1000
+    KEY_FOUND = 100
+    POSSIBLE = 10
+    DOWNGRADE = -1
