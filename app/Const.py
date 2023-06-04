@@ -31,7 +31,7 @@ class Singleton:
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
 
 
@@ -54,8 +54,9 @@ CONFIG_NECESSARY_GROUPS_EXPORT_ALL = 1
 
 
 class ConfigNecessaryError(ValueError):
-    def __init__(self, config):
-        self.message = f"ConfigNecessaryError: {config.pretty_name} (necessary value {config.necessary_group}) got {config.value}."
+    def __init__(self, config, value):
+        super().__init__(config,value)
+        self.message = f"ConfigNecessaryError: {config.pretty_name} (necessary value {config.necessary_group}) got {value}."
 
     def __str__(self) -> str:
         return self.message
@@ -63,6 +64,7 @@ class ConfigNecessaryError(ValueError):
 
 class ConfigError(ValueError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"ConfigError: {config.pretty_name} got {value}."
 
     def __str__(self) -> str:
@@ -71,26 +73,31 @@ class ConfigError(ValueError):
 
 class OptionConfigError(ConfigError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"OptionConfigError: {config.pretty_name} got {value}, but expected one of {config.match_table.keys()}."
 
 
 class ListConfigError(ConfigError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"ListConfigError: {config.pretty_name} got {value}, but expected contained in {config.match_list}."
 
 
 class FileConfigError(ConfigError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"FileConfigError: {config.pretty_name} got {value}, but expected a valid file path."
 
 
 class FolderConfigError(ConfigError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"FolderConfigError: {config.pretty_name} got {value}, but expected a valid folder path."
 
 
 class BoolConfigError(ConfigError):
     def __init__(self, config, value):
+        super().__init__(config,value)
         self.message = f"BoolConfigError: {config.pretty_name} got {value}, but expected a bool value."
 
 
@@ -121,13 +128,13 @@ def crc64(s):
 # file utils
 
 
-def tempFilename() -> str:
+def temp_filename() -> str:
     f = NamedTemporaryFile(delete=False)
     f.close()
     return f.name
 
 
-def getSafePath(ans: str) -> str:
+def get_safe_path(ans: str) -> str:
     """
     移除文件名中的非法字符
     """

@@ -1,13 +1,12 @@
+from typing import Any, Dict, List, Type, Union
+from app.Log import Log
+from app.Config.ConfigTemplate import SingleConfig
 from app.Const import (
     CONFIG_NECESSARY_NEVER,
     CONFIG_NECESSARY_ALWAYS,
     CONFIG_NECESSARY_GROUPS_EXPORT_ALL,
     ConfigError,
 )
-import os
-from typing import Any, Dict, List, Type, Union
-from app.Log import Log
-from app.Config.ConfigTemplate import SingleConfig
 
 
 class Config:
@@ -21,19 +20,23 @@ class Config:
     def __init__(self):
         self.config_list = [i() for i in self.all_config_list]
 
-    def by_dict(self, dict_config: Dict[str, str]) -> 'Config':
+    def by_dict(self, dict_config: Dict[str, str]) -> "Config":
         """
         通过 str 类型的 dict 设置
         """
+        config_names = [i.__class__.__name__ for i in self.config_list]
+        not_in = [i not in config_names for i in dict_config]
+        if any(not_in):
+            raise ValueError(f"Config {not_in} not found in {dict_config}. Supported are: {config_names}")
         for i in self.config_list:
             if i.__class__.__name__ in dict_config:
                 i.set(dict_config[i.__class__.__name__])
         return self
 
-    def verify(self) -> None:
+    def verify(self) -> "Config":
         """
         验证配置是否正确，抛出异常
-        """ # TODO: 重写
+        """
         for i in self.config_list:
             if not i.disabled:
                 i.verify()
@@ -53,12 +56,12 @@ class Config:
                         necessary_group[i.necessary_group] = True
                     except ConfigError:
                         pass
-        for i in necessary_group:
-            if necessary_group[i] is False:
-                raise ValueError("Necessary group not provided: " + i)
-        return None
+        for group, value in necessary_group.items():
+            if value is False:
+                raise ValueError("Necessary group not provided: " + group)
+        return self
 
-    def update(self, config) -> 'Config':
+    def update(self, config) -> "Config":
         """
         根据另外一个 Config 实例更新
         """
@@ -100,7 +103,7 @@ class Config:
 
     def __repr__(self) -> str:
         return "<Config: " + str(self.config_list) + ">"
-    
+
     def to_dict(self) -> Dict[str, Union[str, None]]:
         """
         将配置转换为 dict

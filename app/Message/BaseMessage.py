@@ -15,12 +15,16 @@ class BaseMessage:
     content = None # 消息内容
 
     def to_file(self, path: str) -> None:
+        """
+        将消息内容保存到文件，仅用于文件类型的消息
+        """
         raise NotImplementedError
-        # 仅用于文件类型的消息
 
     def to_text(self) -> str:
+        """
+        转为单个可读取的字符串，任意类型均可
+        """
         return t("message.type.middle_bracket").format(message_type=t(self.description))
-        # 任意类型均可，必须返回单个可读取的字符串
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.msgtype} {self.to_text()}>"

@@ -1,6 +1,7 @@
 {
     "#VERSION": "?",
     "#ENCODING": "UTF-8",
+    "#WINDOWS-LOCALE": "Chinese (Simplified)_China",
     "#AUTHOR": "LY",
     "config.template": "配置模板",
     "config.language": "语言",

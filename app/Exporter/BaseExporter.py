@@ -1,6 +1,6 @@
 from app.Config.ConfigManager import Config
-from app.Chat import Friend, Group, Chat
-from typing import List
+from app.Chat import Chat
+
 
 
 class BaseExporter:
@@ -10,16 +10,14 @@ class BaseExporter:
         self.config: Config = config
 
     def __repr__(self) -> str:
-        return (
-            f"<Exporter: {self.pretty_name}({self.__class__.__name__})>"
-        )
-    
+        return f"<Exporter: {self.pretty_name}({self.__class__.__name__})>"
+
     def export(self, chat: Chat):
         """
         导出特定聊天
         """
         raise NotImplementedError
-    
+
     def generate_table_of_content(self):
         """
         生成导出文件的目录

@@ -1,13 +1,26 @@
 from typing import Type
 import json
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
 from app.Const import ConfigError
-from app.Const import CONFIG_NECESSARY_NEVER, CONFIG_NECESSARY_ALWAYS, CONFIG_NECESSARY_GROUPS_EXPORT_ALL
-from app.Config.ConfigTemplate import IntConfig, SingleConfig, ListConfig, FolderConfig, YesNoConfig, OptionConfig
+from app.Const import (
+    CONFIG_NECESSARY_NEVER,
+    CONFIG_NECESSARY_ALWAYS,
+    CONFIG_NECESSARY_GROUPS_EXPORT_ALL,
+)
+from app.Config.ConfigTemplate import (
+    IntConfig,
+    SingleConfig,
+    ListConfig,
+    FolderConfig,
+    YesNoConfig,
+    OptionConfig,
+)
 from app.Config.ConfigManager import Config
 from app.Exporter.ExporterManager import ExporterManager
 from app.Importer.ImporterManager import ImporterManager
 from app.i18n import i18n
 from app.Log import log
+
 
 @Config.register
 class LanguageCustom(ListConfig):
@@ -20,9 +33,11 @@ class LanguageCustom(ListConfig):
 @Config.register
 class LanguageFallback(LanguageCustom):
     pretty_name = "config.language_fallback"
-    value = json.dumps([
-        "zh_CN",
-    ])
+    value = json.dumps(
+        [
+            "zh_CN",
+        ]
+    )
     hidden = True
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
@@ -48,7 +63,6 @@ class QqNumber(SingleConfig):
     def _verify(self, value: str) -> None:
         if (len(value) < 1) or (not value.isdigit()) or (value[0] == "0"):
             raise ConfigError(self, value)
-        
 
 
 @Config.register
@@ -65,6 +79,7 @@ class ExportAll(YesNoConfig):
             chatId.set("")
             chatId.disable()
         else:
+            chatType.set("friend")
             chatType.enable()
             chatId.enable()
         return self
@@ -131,7 +146,7 @@ class MergeImage(YesNoConfig):
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
 
-from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
+
 
 
 @Config.register
@@ -147,20 +162,23 @@ class LogLevel(OptionConfig):
     }
     necessary_group = CONFIG_NECESSARY_ALWAYS
 
+
 @Config.register
 class ThreadCount(IntConfig):
     pretty_name = "config.thread_count"
     value = "1"
     necessary_group = CONFIG_NECESSARY_ALWAYS
+
     def _verify(self, value: str) -> None:
         try:
             threads = int(value)
-        except ValueError:
-            raise ConfigError(self, value)
+        except ValueError as exc:
+            raise ConfigError(self, value) from exc
         if threads < 1:
             raise ConfigError(self, value)
         if threads > 16:
             log.warning(f"线程数过多：{value}")
+
 
 @Config.register
 class Importer(OptionConfig):
@@ -170,6 +188,7 @@ class Importer(OptionConfig):
     match_table = ImporterManager.to_match_table()
     display_table = ImporterManager.to_display_table()
 
+
 @Config.register
 class Exporter(OptionConfig):
     pretty_name = "config.exporter"
@@ -178,10 +197,11 @@ class Exporter(OptionConfig):
     match_table = ExporterManager.to_match_table()
     display_table = ExporterManager.to_display_table()
 
-'''@Config.register
+
+"""@Config.register
 class DecryptKeys(ListConfig):
     hidden = True
     match_list = None
     pretty_name = "config.decrypt_key"
     value = "[]"
-    necessary_group = CONFIG_NECESSARY_NEVER'''
+    necessary_group = CONFIG_NECESSARY_NEVER"""

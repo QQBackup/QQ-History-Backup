@@ -1,13 +1,10 @@
-import sqlite3
 from typing import List
-import os
 
 from app.Chat import Friend, Group
+from app.Message.BaseMessage import BaseMessage
+from app.Const import IMPORTER_POSSIBLE
 from .BaseImporter import BaseImporter
 from .ImporterManager import ImporterManager
-from app.Database import _SingleDatabase
-from app.Message.BaseMessage import BaseMessage
-from app.Log import log
 
 
 @ImporterManager.register
@@ -23,12 +20,12 @@ class EmptyImporter(BaseImporter):
     def get_group_list(self) -> List[Group]:
         return []
 
-    def get_friend_message(self) -> List[BaseMessage]:
-        raise NotImplementedError
+    def get_friend_message(self, friend) -> List[BaseMessage]:
+        return []
 
-    def get_group_message(self) -> List[BaseMessage]:
-        raise NotImplementedError
+    def get_group_message(self, group) -> List[BaseMessage]:
+        return []
 
     @classmethod
     def detect_possibility_of_import(cls, config) -> int:
-        return -100000
+        return IMPORTER_POSSIBLE.IMPOSSIBLE

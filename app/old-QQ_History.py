@@ -13,6 +13,7 @@ from html import escape
 from tempfile import NamedTemporaryFile
 import pilk
 import av
+
 av.logging.set_level(av.logging.ERROR)
 
 
@@ -47,21 +48,30 @@ def tempFilename() -> str:
 def isEmpty(s):
     if s is None:
         return True
-    if type(s) == int and s == 0:
+    if isinstance(s, int) and s == 0:
         return True
-    if type(s) == str and s == '':
+    if isinstance(s, str) and s == "":
+        return True
+    if isinstance(s, bytes) and s == b"":
         return True
     return False
 
 
-class QQoutput():
-    def __init__(self, base_path: str, qq_self: str, emoji: int = 1, with_img: bool = True, combine_img: bool = False):
+class QQoutput:
+    def __init__(
+        self,
+        base_path: str,
+        qq_self: str,
+        emoji: int = 1,
+        with_img: bool = True,
+        combine_img: bool = False,
+    ):
         # 真正用到的文件只有[f"{QQ}.db", f"slowtable_{QQ}.db", "kc"]，这里我直接合并到一个层级下了
         self.IS_TIM = False  # TIM会缺少一些字段
         self.base_path = base_path
         if type(qq_self) == int:
             qq_self = str(qq_self)
-        assert(type(qq_self) == str)
+        assert type(qq_self) == str
         self.qq_self: str = qq_self  # 自己的QQ号
         self.uin_to_username = {}
         self.troopuin_to_troopname = {}
@@ -76,13 +86,13 @@ class QQoutput():
         self.detect_TIM()
         self.init_friend_list()
         self.init_troop_list()
-#        self.qq: str = qq # 导出对象的QQ号
-#        self.mode = mode # 1为私聊，2为群聊
-        assert(emoji in (1, 2))
+        #        self.qq: str = qq # 导出对象的QQ号
+        #        self.mode = mode # 1为私聊，2为群聊
+        assert emoji in (1, 2)
         self.emoji = emoji  # 1为新表情，2为旧表情
-        assert(type(with_img) == bool)
+        assert type(with_img) == bool
         self.with_img = with_img  # True为生成图片，False为不生成图片
-        assert(type(combine_img) == bool)
+        assert type(combine_img) == bool
         self.combine_img = combine_img  # True为将图片嵌入HTML文件中，False为在HTML中存储图片的相对路径
 
         # self.num_to_name = {}
@@ -100,8 +110,7 @@ class QQoutput():
 
     @staticmethod
     def getSafePath(ans: str) -> str:
-        ban_words = "\\  /  :  *  ?  \"  '  <  >  |  $  \r  \n".replace(
-            ' ', '')
+        ban_words = "\\  /  :  *  ?  \"  '  <  >  |  $  \r  \n".replace(" ", "")
         ban_strips = "#/~"
         while True:
             ans_bak = ans
@@ -135,58 +144,59 @@ class QQoutput():
         # other mode=1
         # https://github.com/roadwide/qqmessageoutput/blob/master/q.py
         # decrypt处理Emoji时会出问题，而这个不会
-        if (mode == 0):
+        if mode == 0:
             rowbyte = []
             # 这么做是为了解决汉字的utf-8是三字节
             for i in range(0, len(data)):
                 rowbyte.append(data[i] ^ ord(self.key[i % len(self.key)]))
             rowbyte = bytes(rowbyte)
             try:
-                msg = rowbyte.decode(encoding='utf-8')
+                msg = rowbyte.decode(encoding="utf-8")
             except:
                 msg = ""
             return msg
-        elif (mode == 1):
-            str = ''
+        elif mode == 1:
+            str = ""
             try:
                 j = 0
                 for i in range(0, len(data)):
                     # 获取unicode码
                     unicode = ord(data[i])
                     # 如果大于ffff 处理emoji
-                    if (unicode > 0xffff):
+                    if unicode > 0xFFFF:
                         # 分为2个10位二进制与两个密码进行异或
                         code = unicode ^ (
-                            (ord(self.key[i+j % len(self.key)]) << 10) + ord(self.key[i+j+1 % len(self.key)]))
+                            (ord(self.key[i + j % len(self.key)]) << 10)
+                            + ord(self.key[i + j + 1 % len(self.key)])
+                        )
                         str += chr(code)
                         j = j + 1
                     else:
-                        str += chr(ord(data[i]) ^
-                                   ord(self.key[i+j % len(self.key)]))
+                        str += chr(ord(data[i]) ^ ord(self.key[i + j % len(self.key)]))
             except:
                 str = ""
             return str
 
     def decrypt(self, data, msg_type=-1000):
         # fix处理**一些东西**会出问题，这个不会
-        msg = b''
+        msg = b""
         if type(data) == bytes:
-            msg = b''
+            msg = b""
             for i in range(0, len(data)):
                 msg += bytes([data[i] ^ ord(self.key[i % len(self.key)])])
         elif type(data) == str:
-            msg = ''
+            msg = ""
             for i in range(0, len(data)):
                 msg += chr(ord(data[i]) ^ ord(self.key[i % len(self.key)]))
             return msg
 
         if msg_type == -1000 or msg_type == -1049 or msg_type == -1051:
             try:
-                return escape(msg.decode('utf-8'))
+                return escape(msg.decode("utf-8"))
             except:
                 # print(msg)
                 pass
-                return '[decode error]'
+                return "[decode error]"
 
         if not self.with_img:
             return None
@@ -197,7 +207,7 @@ class QQoutput():
         elif msg_type == -5008:
             return self.decode_share_url(msg)
         elif msg_type == -5012 or msg_type == -5018:
-            return '[戳一戳]'
+            return "[戳一戳]"
         elif msg_type == -2002:  # 语音消息
             return self.decode_silk(msg)
         # for debug
@@ -205,7 +215,7 @@ class QQoutput():
         return None
 
     def add_emoji(self, msg):
-        pos = msg.find('\x14')
+        pos = msg.find("\x14")
         while pos != -1:
             lastpos = pos
             num = ord(msg[pos + 1])
@@ -216,18 +226,20 @@ class QQoutput():
                     filename = "new/s" + index + ".png"
                 else:
                     filename = "old/" + index + ".gif"
-                emoticon_path = os.path.join('emoticon', filename)
+                emoticon_path = os.path.join("emoticon", filename)
                 if not os.path.isfile(emoticon_path):
+                    pass
                     # TODO
                 if self.combine_img:
                     emoticon_path = self.get_base64_from_pic(emoticon_path)
 
                 msg = msg.replace(
-                    msg[pos:pos + 2], '<img src="{}" alt="{}" />'.format(emoticon_path, index))
+                    msg[pos : pos + 2],
+                    '<img src="{}" alt="{}" />'.format(emoticon_path, index),
+                )
             else:
-                msg = msg.replace(msg[pos:pos + 2],
-                                  '[emoji:{}]'.format(str(num)))
-            pos = msg.find('\x14')
+                msg = msg.replace(msg[pos : pos + 2], "[emoji:{}]".format(str(num)))
+            pos = msg.find("\x14")
             if pos == lastpos:
                 break
         return msg
@@ -239,11 +251,13 @@ class QQoutput():
         md5num = hashlib.md5(num).hexdigest().upper()
         if mode == 1:
             cmd = "select msgData,senderuin,time,msgtype from mr_friend_{}_New order by time".format(
-                md5num)
-#            self.get_friends()
+                md5num
+            )
+        #            self.get_friends()
         else:
             cmd = "select msgData,senderuin,time,msgtype from mr_troop_{}_New order by time".format(
-                md5num)
+                md5num
+            )
             # print('Groups {} -> {}'.format(num, md5num))
             self.get_troop_members(qq)
 
@@ -261,8 +275,7 @@ class QQoutput():
             if msg_final is None:
                 continue
 
-            allmsg.append(
-                [sendtime, msg_type, self.decrypt(uin), msg_final])
+            allmsg.append([sendtime, msg_type, self.decrypt(uin), msg_final])
         return allmsg
 
     def get_friends(self):
@@ -295,10 +308,11 @@ class QQoutput():
                     #                    print("↑你这个好友怎么没有备注的？开Issue！")
                     pass
             self.troopuin_to_troopmembers[qq][num] = final_name
-#            print([self.fix(i, 1) for i in row[2:6]])
+            #            print([self.fix(i, 1) for i in row[2:6]])
             if not isEmpty(row[6]):  # 添加头衔
-                self.troopuin_to_troopmembers[qq][num] = f"【{row[6]}】" + \
-                    self.troopuin_to_troopmembers[qq][num]
+                self.troopuin_to_troopmembers[qq][num] = (
+                    f"【{row[6]}】" + self.troopuin_to_troopmembers[qq][num]
+                )
 
     def _fill_cursors(self, cmd):
         cursors = []
@@ -322,8 +336,8 @@ class QQoutput():
         self.outut_path = output_path
         if type(qq) == int:
             qq = str(qq)
-        assert(type(qq) == str)
-        assert(mode in (1, 2))
+        assert type(qq) == str
+        assert mode in (1, 2)
         name1 = "我"
         fileprefix = ""
         if mode == 1:
@@ -344,7 +358,7 @@ class QQoutput():
             return
         f2 = open(file, "w", encoding="utf-8")
         f2.write(
-            "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head>"
+            '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>'
         )
         f2.write("<div style='white-space: pre-line'>")
         if mode == 1:
@@ -356,17 +370,16 @@ class QQoutput():
                 continue
             if uid == str(self.qq_self):
                 f2.write("<p align='right'>")
-                f2.write("<font color=\"green\">")
+                f2.write('<font color="green">')
                 f2.write(ts)
-                f2.write("</font>-----<font color=\"blue\"><b>")
+                f2.write('</font>-----<font color="blue"><b>')
                 f2.write(name1)
                 f2.write("</font></b></br>")
             else:
                 f2.write("<p align='left'>")
-                f2.write("<font color=\"blue\"><b>")
-                f2.write(escape("{}({})".format(
-                    table.get(uid, "？？？未知？？？"), uid)))
-                f2.write("</b></font>-----<font color=\"green\">")
+                f2.write('<font color="blue"><b>')
+                f2.write(escape("{}({})".format(table.get(uid, "？？？未知？？？"), uid)))
+                f2.write('</b></font>-----<font color="green">')
                 f2.write(ts)
                 f2.write("</font></br>")
             f2.write(self.add_emoji(msg))
@@ -378,7 +391,7 @@ class QQoutput():
 
     def init_key(self):
         kc_file = open(self.kc_path, "r")
-        self.key = kc_file.read().strip('\r \n')
+        self.key = kc_file.read().strip("\r \n")
         kc_file.close()
 
     def init_paths(self):
@@ -403,7 +416,8 @@ class QQoutput():
                 self.kc_path = current_file
         if self.kc_path is None or self.db_main_path is None:  # 很少记录的号没有slowtable，故不判断
             raise FileNotFoundError(
-                f"无法找到目标文件！\n路径：{self.base_path}\n当前匹配列表：{[self.kc_path, self.db_main_path, self.db_slow_path]}")
+                f"无法找到目标文件！\n路径：{self.base_path}\n当前匹配列表：{[self.kc_path, self.db_main_path, self.db_slow_path]}"
+            )
 
     def init_friend_list(self):
         self.FriendsData = []
@@ -424,27 +438,32 @@ class QQoutput():
         # troopuin-群号，troopRemark-群备注，troopname-群名
         execute = "select troopuin,troopRemark,troopname from TroopInfoV2"
         if self.IS_TIM:
-            execute = execute.replace(
-                "troopRemark", "troopname")  # TIM无法给群聊设备注
+            execute = execute.replace("troopRemark", "troopname")  # TIM无法给群聊设备注
         cursor = self.fill_cursor(execute)
         for i in cursor:
             uin, remark, name = i[0], i[1], i[2]
-#            print([self.fix(ii,1) for ii in i])
+            #            print([self.fix(ii,1) for ii in i])
             decode_uin = self.mydecrypt(uin)
             decode_remark = self.mydecrypt(remark)
             decode_name = self.mydecrypt(name)
             troop = [decode_uin, decode_remark, decode_name]
             self.TroopsData.append(troop)
-#            print(troop)
+            #            print(troop)
             self.troopuin_to_troopname[decode_uin] = self.getDisplayName(troop)
 
     def map_new_emoji(self):
-        with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), './emoticon/face_config.json'), encoding='utf-8') as f:
+        with open(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                "./emoticon/face_config.json",
+            ),
+            encoding="utf-8",
+        ) as f:
             # 这个地方可能会在打包的时候出问题
             emojis = json.load(f)
         new_emoji_map = {}
 
-        for e in emojis['sysface']:
+        for e in emojis["sysface"]:
             if self.emoji == 1:
                 new_emoji_map[e["AQLid"]] = e["QSid"]
             else:
@@ -454,47 +473,57 @@ class QQoutput():
 
     def get_base64_from_pic(self, path):
         with open(path, "rb") as image_file:
-            return (b'data:image/png;base64,' + base64.b64encode(image_file.read())).decode("utf-8")
+            return (
+                b"data:image/png;base64," + base64.b64encode(image_file.read())
+            ).decode("utf-8")
 
     def decode_pic(self, data):
         try:
             doc = PicRec()
             doc.ParseFromString(data)
-            url = 'chatimg:' + doc.md5
+            url = "chatimg:" + doc.md5
             filename = hex(crc64(url))
-            filename = 'Cache_' + filename.replace('0x', '')
+            filename = "Cache_" + filename.replace("0x", "")
             chatimg_basepath = os.path.join(self.base_path, "chatimg")
             if not os.path.isdir(chatimg_basepath):
                 chatimg_basepath = "chatimg"
             rel_path = os.path.join(chatimg_basepath, filename[-3:], filename)
             if os.path.exists(rel_path):
                 print(rel_path)
-                w = 'auto' if doc.uint32_thumb_width == 0 else str(
-                    doc.uint32_thumb_width)
-                h = 'auto' if doc.uint32_thumb_height == 0 else str(
-                    doc.uint32_thumb_height)
+                w = (
+                    "auto"
+                    if doc.uint32_thumb_width == 0
+                    else str(doc.uint32_thumb_width)
+                )
+                h = (
+                    "auto"
+                    if doc.uint32_thumb_height == 0
+                    else str(doc.uint32_thumb_height)
+                )
                 if self.combine_img:
                     rel_path = self.get_base64_from_pic(rel_path)
-                return '<img src="{}" width="{}" height="{}" />'.format(os.path.join("chatimg", filename[-3:], filename), w, h)
+                return '<img src="{}" width="{}" height="{}" />'.format(
+                    os.path.join("chatimg", filename[-3:], filename), w, h
+                )
                 # 最后这里必须用相对路径
         except Exception as e:
             pass
-        return '[图片]'
+        return "[图片]"
 
     def decode_mix_msg(self, data):
         try:
             doc = Msg()
             doc.ParseFromString(data)
-            message = ''
+            message = ""
             for elem in doc.elems:
                 if elem.picMsg:
                     message += self.decode_pic(elem.picMsg)
                 else:
-                    message += escape(elem.textMsg.decode('utf-8'))
+                    message += escape(elem.textMsg.decode("utf-8"))
             return message
         except:
             pass
-        return '[混合消息]'
+        return "[混合消息]"
 
     def decode_silk(self, data):
         # TODO
@@ -503,21 +532,23 @@ class QQoutput():
             doc.ParseFromString(data)
             print(doc.sttText)
             voiceLength = doc.voiceLength  # 以秒为单位
-            filename = doc.localPath[doc.localPath.find("/ptt/")+5:]
+            filename = doc.localPath[doc.localPath.find("/ptt/") + 5 :]
             ptt_basepath = os.path.join(self.base_path, "ptt")
             if not os.path.isdir(ptt_basepath):
                 ptt_basepath = "ptt"
             if not os.path.isdir(ptt_basepath):
-                return '[语音消息]（目录不存在）'
+                return "[语音消息]（目录不存在）"
             rel_path = os.path.join(ptt_basepath, filename)
             if not os.path.exists(rel_path):
                 p = [".amr", ".slk"]
-                if rel_path.endswith(p[0]) and os.path.exists(rel_path[:-4]+p[1]): # 试着更改后缀匹配
-                    filename = filename[:-4]+p[1]
-                    rel_path = rel_path[:-4]+p[1]
-                elif rel_path.endswith(p[1]) and os.path.exists(rel_path[:-4]+p[0]):
-                    filename = filename[:-4]+p[0]
-                    rel_path = rel_path[:-4]+p[0]
+                if rel_path.endswith(p[0]) and os.path.exists(
+                    rel_path[:-4] + p[1]
+                ):  # 试着更改后缀匹配
+                    filename = filename[:-4] + p[1]
+                    rel_path = rel_path[:-4] + p[1]
+                elif rel_path.endswith(p[1]) and os.path.exists(rel_path[:-4] + p[0]):
+                    filename = filename[:-4] + p[0]
+                    rel_path = rel_path[:-4] + p[0]
                 else:
                     # 摆了！
                     return f"[语音消息]（文件{rel_path}不存在）"
@@ -526,16 +557,16 @@ class QQoutput():
                 os.makedirs(voice_path)
             pcm = tempFilename()
             pilk.decode(rel_path, pcm)
-            absolute_output = os.path.join(voice_path, filename[:-4]+".mp3")
-            relative_output = os.path.join("voice", filename[:-4]+".mp3")
-            rate=24000# pilk源码写的，不管了
-            with av.open(pcm,format='s16le',options={'ar':str(rate),'ac':'1'}) as in_container:
+            absolute_output = os.path.join(voice_path, filename[:-4] + ".mp3")
+            relative_output = os.path.join("voice", filename[:-4] + ".mp3")
+            rate = 24000  # pilk源码写的，不管了
+            with av.open(
+                pcm, format="s16le", options={"ar": str(rate), "ac": "1"}
+            ) as in_container:
                 in_stream = in_container.streams.audio[0]
-                with av.open(absolute_output, 'w') as out_container:
+                with av.open(absolute_output, "w") as out_container:
                     out_stream = out_container.add_stream(
-                        'mp3',
-                        rate=rate,
-                        layout='mono'
+                        "mp3", rate=rate, layout="mono"
                     )
                     try:
                         for frame in in_container.decode(in_stream):
@@ -546,39 +577,48 @@ class QQoutput():
                         raise ee
                         pass
             os.remove(pcm)
-            return '<audio src="{}" controls title="{}"/>'.format(relative_output, f"时长 {voiceLength} 秒的语音消息")
+            return '<audio src="{}" controls title="{}"/>'.format(
+                relative_output, f"时长 {voiceLength} 秒的语音消息"
+            )
             # 最后这里必须用相对路径
         except Exception as e:
             print(traceback.format_exc())
             raise e
             pass
-        return '[语音消息]'
+        return "[语音消息]"
 
     def decode_share_url(self, msg):
         # TODO
-        return '[分享卡片]'
+        return "[分享卡片]"
 
 
 def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
     try:
-        f = open('log.txt', 'w', encoding="utf-8")
+        f = open("log.txt", "w", encoding="utf-8")
     except:
+
         class ff:
-            def write(): pass
-            def close(): pass
+            def write():
+                pass
+
+            def close():
+                pass
+
         f = ff()
     global print
     print_bak = print
 
-    def print(*arg, **kwarg):
-        print_bak(*arg, **kwarg)
-        f.write("[PRINT]: "+' '.join(arg)+"\n")
+    def print(*args, **kwargs):
+        print_bak(*args, **kwargs)
+        f.write("[PRINT]: " + " ".join(arg) + "\n")
+
     try:
         q = QQoutput(base_path, str(qq_self), emoji, with_img, combine_img)
         if dump_all:
             print("正在批量导出……")
-            dest = "output_" + \
-                time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
+            dest = "output_" + time.strftime(
+                "%Y%m%d-%H%M%S", time.localtime(time.time())
+            )
             try:
                 os.mkdir(dest)
             except:
@@ -596,9 +636,9 @@ def main(base_path, qq_self, qq, mode, emoji, with_img, combine_img, dump_all):
                     f.write(repr(e))
                     f.write(traceback.format_exc())
             print("")
-            print("="*30)
+            print("=" * 30)
             print("所有记录导出完成。")
-            print("="*30)
+            print("=" * 30)
         else:
             q.output(qq, mode)
     except Exception as e:
@@ -617,11 +657,10 @@ def run_directly():
     qq_self = "修改这里！"  # 自己的QQ号
     batch = True  # 是否导出所有记录
     q = QQoutput(base_path, str(qq_self))
-    f = open('log.txt', 'w', encoding="utf-8")
+    f = open("log.txt", "w", encoding="utf-8")
     if batch:
         print("正在批量导出……")
-        dest = "output_" + \
-            time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
+        dest = "output_" + time.strftime("%Y%m%d-%H%M%S", time.localtime(time.time()))
         try:
             os.mkdir(dest)
         except:
@@ -639,9 +678,9 @@ def run_directly():
                 f.write(repr(e))
                 f.write(traceback.format_exc())
         print("")
-        print("="*30)
+        print("=" * 30)
         print("所有记录导出完成。")
-        print("="*30)
+        print("=" * 30)
 
     else:
         qq = "修改这里！"
@@ -650,5 +689,5 @@ def run_directly():
     f.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_directly()

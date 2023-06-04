@@ -1,6 +1,6 @@
 {
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.analysis.typeCheckingMode": "basic",
-    "python.linting.banditEnabled": true
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.linting.banditEnabled": false
 }

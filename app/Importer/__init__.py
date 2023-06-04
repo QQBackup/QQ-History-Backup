@@ -1,1 +1,9 @@
-from . import AutoDetectImporter, BaseImporter, EmptyImporter, AndroidQq, AndroidTim, PcIcalinguaPP, WindowsQq
+from . import (
+    AutoDetectImporter,
+    BaseImporter,
+    EmptyImporter,
+    AndroidQq,
+    AndroidTim,
+    PcIcalinguaPP,
+    WindowsQq,
+)
