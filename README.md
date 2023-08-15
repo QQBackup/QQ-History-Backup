@@ -1,8 +1,10 @@
 # QQ聊天记录导出
 
-## 新版公告
+## 维护情况
 
-本项目正在`dev`分支缓慢重构，由于我是学生时间并不充裕，欢迎PR！
+省流：没时间维护，欢迎新maintainer与pr（或者可以自行开个fork）。请提交到`dev`分支`。
+
+同时，请参看[白羽夜星制作组](https://github.com/Hakuuyosei/QQHistoryExport)的改进版。
 
 ## 运行方式
 
