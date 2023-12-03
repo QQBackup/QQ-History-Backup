@@ -2,7 +2,7 @@
 
 ## 维护情况
 
-省流：没时间维护，欢迎新maintainer与pr（或者可以自行开个fork）。请提交到`dev`分支`。
+省流：没时间维护，欢迎新 maintainer 与 PR（或者可以自行开个fork）。请提交到`dev`分支。
 
 同时，请参看[白羽夜星制作组](https://github.com/Hakuuyosei/QQHistoryExport)的改进版。
 
