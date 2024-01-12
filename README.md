@@ -2,7 +2,7 @@
 
 ## 关于其他平台（Windows, MacOS, iOS…）
 
-请看[QQBackup/qq-win-db-key](https://github.com/QQBackup/qq-win-db-key)。
+请看 [QQBackup/qq-win-db-key](https://github.com/QQBackup/qq-win-db-key)。
 
 ## 维护情况
 
