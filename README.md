@@ -1,5 +1,9 @@
 # QQ聊天记录导出
 
+## 关于其他平台（Windows, MacOS, iOS…）
+
+请看[QQBackup/qq-win-db-key](https://github.com/QQBackup/qq-win-db-key)。
+
 ## 维护情况
 
 省流：没时间维护，欢迎新 maintainer 与 PR（或者可以自行开个fork）。请提交到`dev`分支。
